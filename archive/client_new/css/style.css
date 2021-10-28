@@ -1,0 +1,29 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #444444;
+}
+
+#navigation, #navigation a {
+    text-align: center;
+    overflow: hidden;
+    text-decoration: none;
+    color: #ffffff;
+    size: 100px;
+    font-size: 25px;
+}
+
+#nav-left #nav-col {
+    float: left;
+    padding: 30px;
+}
+
+#nav-right #nav-col {
+    transition: all 0.3s ease-in-out 0s;
+    float: right;
+    padding: 30px;
+}
+
+#nav-right a img {
+    width: 25px;
+}

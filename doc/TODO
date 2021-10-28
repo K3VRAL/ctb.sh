@@ -1,0 +1,12 @@
+TODO
+
+Do the actual documentation with each page having their own explainations and examples, stop being lazy.
+
+Use mariadb/mysql to store data of:
+    - Rankings/Mod Rankings
+
+Map out how the SQL databases will work
+
+Make documentation to use:
+    - .env
+    - mysql/mariadb

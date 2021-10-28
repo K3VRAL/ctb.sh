@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="keywords" content="osu ctb osu!ctb">
+        <meta name="description" content="osu!ctb">
+        <meta name="author" content="K3">
+
+        <title>osu!ctb</title>
+        <link rel="shortcut icon" type="image/png" href="/img/favicon.png"/>
+
+        <link rel="stylesheet" type="text/css" href="/osu/style/style.css">
+        
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    
+        <link rel="stylesheet" type="text/css" href="/multi/fadein.css">
+        <link rel="stylesheet" type="text/css" href="/multi/style.css">
+        <script type="text/javascript" src="/multi/multi.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                var file = './data/mod.json';
+                $.getJSON(file, function(data) {
+                    var req = new XMLHttpRequest();
+                    req.open("HEAD", file, false);
+                    req.send(null);
+                    if (req.status== 200)
+                    {
+                        $("#lUpdate").append("Last Updated: " + req.getResponseHeader("Last-Modified"));
+                        $("#dAmount").append("Data Amount: " + data.length + " players");
+                    }
+                    $("#cSorted").append("Currently Sorted By: " + localStorage.getItem("sortby"));
+                });
+
+                $('#getJson').click(function() {
+                    $.getJSON(file, function(data) {
+                        var sorting = localStorage.getItem("sortby");
+                        data.sort(function(a, b) {
+                            switch (sorting) {
+                                case "User":
+                                    return null;
+
+                                case "NoMod":
+                                    return b.pp[0] - a.pp[0];
+                                
+                                case "Hidden":
+                                    return b.pp[1] - a.pp[1];
+                                
+                                case "Hardrock":
+                                    return b.pp[2] - a.pp[2];
+                                
+                                case "Doubletime":
+                                    return b.pp[3] - a.pp[3];
+                                
+                                case "Nightcore":
+                                    return b.pp[4] - a.pp[4];
+                                
+                                case "Flashlight":
+                                    return b.pp[5] - a.pp[5];
+                                
+                                case "Easy":
+                                    return b.pp[6] - a.pp[6];
+                                
+                                case "Nofail":
+                                    return b.pp[7] - a.pp[7];
+                                
+                                case "Halftime":
+                                    return b.pp[8] - a.pp[8];
+                                
+                                case "Suddendeath":
+                                    return b.pp[9] - a.pp[9];
+                                
+                                case "Perfect":
+                                    return b.pp[10] - a.pp[10];
+                                
+                                case "Broken PP Rankings":
+                                    return b.pp[11] - a.pp[11];
+                            }
+                        });
+
+                        var searchuser = false;
+                        var j = 0;
+                        if (sorting == "User") {
+                            for (j = 0; j < data.length; j++) {
+                                if (data[j].name.toLowerCase() == localStorage.getItem('userby').toLowerCase()) {
+                                    i = j;
+                                    searchuser = true;
+                                    break;
+                                }
+                            }
+                            if (!searchuser) {
+                                return;
+                            }
+                        }
+                        for (var i = 50 * parseInt(localStorage.getItem("page")); i < 50 * (parseInt(localStorage.getItem("page")) + 1); i++) {
+                            if (searchuser) {
+                                i = j;
+                            }
+                            var tblRow = "<tr>"
+                                + "<td>" + (i + 1).toLocaleString() + "</td>"
+                                + "<td><a id=\"usrid\" href=\"https://osu.ppy.sh/users/" + data[i].id + "\">" + data[i].name + "</a></td>"
+                                + "<td>" + (~~data[i].pp[0]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[1]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[2]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[3]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[4]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[5]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[6]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[7]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[8]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[9]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[10]).toLocaleString() + "pp</td>"
+                                + "<td>" + (~~data[i].pp[11]).toLocaleString() + " maps</td>"
+                            $(tblRow).appendTo("#userdata tbody");
+                            if (sorting == "User") {
+                                break;
+                            }
+                        }
+                    });
+                });
+                
+                $('#cNext').click(function(){
+                    localStorage.setItem("page", parseInt(localStorage.getItem("page")) + 1);
+                    $('#getJson').click();
+                });
+                if (!(window.location.href.split('#').length > 1)) {
+                    localStorage.clear();
+                    localStorage.setItem("sortby", "NoMod");
+                    window.location.href = "#";
+                }
+                $('#cNext').click();
+                localStorage.setItem("page", 0);
+            });
+        </script>
+    </head>
+    <body>
+        <div id="header"></div>
+        <div style="display: none" id="getJson"></div>
+        <h1 id="back"><a href=".">Back</a></h1>
+        <h1 id="title">Mod Rankings</h1>
+        <h1 id="lUpdate"></h1>
+        <h1 id="dAmount"></h1>
+        <h1 id="cSorted"></h1>
+        <input type="text" placeholder="Search.." id="uSearch">
+        <button type="button" onclick="localStorage.setItem('sortby', 'User'); localStorage.setItem('userby', document.getElementById('uSearch').value); window.location.reload();">Search</button>
+        <table id= "userdata" border="2">
+            <thead>
+                <th>Count</th>
+                <th>Name</th>
+                <th>NoMod<button type="button" onclick="localStorage.setItem('sortby', 'NoMod'); window.location.reload();">/\</button></th>
+                <th>Hidden<button type="button" onclick="localStorage.setItem('sortby', 'Hidden'); window.location.reload();">/\</button></th>
+                <th>Hardrock<button type="button" onclick="localStorage.setItem('sortby', 'Hardrock'); window.location.reload();">/\</button></th>
+                <th>Doubletime<button type="button" onclick="localStorage.setItem('sortby', 'Doubletime'); window.location.reload();">/\</button></th>
+                <th>Nightcore<button type="button" onclick="localStorage.setItem('sortby', 'Nightcore'); window.location.reload();">/\</button></th>
+                <th>Flashlight<button type="button" onclick="localStorage.setItem('sortby', 'Flashlight'); window.location.reload();">/\</button></th>
+                <th>Easy<button type="button" onclick="localStorage.setItem('sortby', 'Easy'); window.location.reload();">/\</button></th>
+                <th>Nofail<button type="button" onclick="localStorage.setItem('sortby', 'Nofail'); window.location.reload();">/\</button></th>
+                <th>Halftime<button type="button" onclick="localStorage.setItem('sortby', 'Halftime'); window.location.reload();">/\</button></th>
+                <th>Suddendeath<button type="button" onclick="localStorage.setItem('sortby', 'Suddendeath'); window.location.reload();">/\</button></th>
+                <th>Perfect<button type="button" onclick="localStorage.setItem('sortby', 'Perfect'); window.location.reload();">/\</button></th>
+                <th>Broken PP Rankings<button type="button" onclick="localStorage.setItem('sortby', 'Broken PP Rankings'); window.location.reload();">/\</button></th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button type="button" id="cNext">Show More</button>
+    </body>
+</html>

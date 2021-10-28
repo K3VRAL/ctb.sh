@@ -1,0 +1,21 @@
+# Make sure you remove 'template' and include all the necessary data/keys for the functionality of the website to work
+# MySQL
+DB_HOST=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
+
+# Python osu!API
+OAPI_CLIENT_ID=
+OAPI_CLIENT_SECRET=
+OAPI_CODE=
+
+OAPI_TOKEN_TYPE=
+OAPI_EXPIRES_IN=
+OAPI_ACCESS_TOKEN=
+OAPI_REFRESH_TOKEN=
+
+# YouTube API
+YT_KEY=
+
+# Others Undocumented

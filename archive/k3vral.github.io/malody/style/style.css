@@ -1,0 +1,11 @@
+/* HTML */
+html, body {
+    background: #3498db;
+}
+
+/* Title */
+#title {
+    text-align: center;
+    font-size: 50px;
+    color: #000000;
+}

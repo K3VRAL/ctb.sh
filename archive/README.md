@@ -1,0 +1,1 @@
+This is the old website where everything was done statically. Take everything with a grain of salt as it is poorly programmed with the the mind of only doing everything statically. Archiving this and using this as a reference frame for consistency. Please ignore.

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <%- include('../../../partials/head'); %>
+        <link rel="stylesheet" type="text/css" href="/css/pages/osu/index.css">
+    </head>
+    <body>
+        <%- include('../../../partials/navigation'); %>
+        <% if (addata) { %>
+            <script>
+                let linkElemAD = document.createElement('link');
+                linkElemAD.rel = 'stylesheet';
+                linkElemAD.type = 'text/css';
+                linkElemAD.href = '/css/pages/osu/addata.css'
+                document.head.append(linkElemAD);
+
+                window.onload = (() => {
+                    let modalAD = document.getElementById('addatamodal');
+                    document.getElementById('addatalink').onclick = function() {
+                        modalAD.style.display = 'block';
+                    }
+                    document.getElementById('addataclose').onclick = function() {
+                        modalAD.style.display = 'none';
+                    }
+                });
+
+                let hideLink = ((e) => {
+                    let x = document.getElementsByClassName('deletemethod');
+                    for (let i = 0; i < x.length; i++) {
+                        x[i].style.display = e.target.value == 'delete' ? 'none' : 'block';
+                    }
+                });
+            </script>
+            <div id='addata'><a id='addatalink'>Add Data</a></div>
+            <div id='addatamodal'>
+                <div id='addatacontent'>
+                    <span id='addataclose'>&times;</span>
+                    <form method='POST'>
+                        <p id='fpstyle'>Method</p>
+                        <select name='method' onchange='hideLink(event);'>
+                            <option value='insert'>insert</option>
+                            <option value='delete'>delete</option>
+                            <option value='update'>update</option>
+                        </select>
+                        <p id='fpstyle'>Name: </p><input type='text' name='name'>
+                        <p id='fpstyle' class='deletemethod'>Link: </p><input class='deletemethod' type='text' name='link'>
+                        <p id='fpstyle'>NOTE: This works but is very easy to abuse so it will be disabled for the time being.</p>
+                        <input type='submit' value='Submit Data'>
+                    </form>
+                </div>
+            </div>
+        <% } %>
+        <h1 id="title"><%= currpage %></h1>
+        <div class="tiles">
+            <% for (let page in pages) { %>
+                <a class="tile" href='<%= pages[page].link %>'><%= pages[page].name %></a>
+            <% } %>
+    </body>
+</html>

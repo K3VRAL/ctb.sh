@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="keywords" content="osu ctb osu!ctb">
+        <meta name="description" content="osu!ctb">
+        <meta name="author" content="K3">
+
+        <title>osu!ctb | Replays Watched Rankings</title>
+        <link rel="shortcut icon" type="image/png" href="/img/favicon.png"/>
+
+        <link rel="stylesheet" type="text/css" href="/osu/style/style.css">
+        
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="/multi/fadein.css">
+        <link rel="stylesheet" type="text/css" href="/multi/style.css">
+        <script type="text/javascript" src="/multi/multi.js"></script>
+        
+        <script>            
+            $(document).ready(function() {
+                var file = './data/main.json';
+                $.getJSON(file, function(data) {
+                    var req = new XMLHttpRequest();
+                    req.open("HEAD", file, false);
+                    req.send(null);
+                    if (req.status== 200)
+                    {
+                        $("#lUpdate").append("Last Updated: " + req.getResponseHeader("Last-Modified"));
+                            $("#dAmount").append("Data Amount: " + data.length + " players");
+                    }
+                    $("#cSorted").append("Currently Sorted By: " + localStorage.getItem("sortby"));
+                });
+
+                $('#getJson').click(function() {
+                    $.getJSON(file, function(data) {
+                        sorting = localStorage.getItem("sortby");
+                        data.sort(function(a, b) {
+                            switch (sorting) {
+                                case "Global Rank":
+                                    return a.global_rank - b.global_rank;
+                                    
+                                case "Country":
+                                    return a.user.country.name.toUpperCase().localeCompare(b.user.country.name.toUpperCase());
+                                
+                                case "Name":
+                                    return a.user.username.toUpperCase().localeCompare(b.user.username.toUpperCase());
+                                
+                                case "Level":
+                                    return (b.level.current * (b.level.progress / 100)) - (a.level.current * (b.level.progress / 100));
+                                
+                                case "Playcount":
+                                    return b.play_count - a.play_count;
+
+                                case "Playtime":
+                                    return (b.play_time / 60 / 60) - (a.play_time / 60 / 60);
+                                
+                                case "Replays Watched":
+                                    return b.replays_watched_by_others - a.replays_watched_by_others;
+                                
+                                case "First Place":
+                                    return b.scores_first_count - a.scores_first_count;
+                                
+                                case "Ranked Score":
+                                    return b.ranked_score - a.ranked_score;
+                                
+                                case "Total Score":
+                                    return b.total_score - a.total_score;
+                                
+                                case "SSH":
+                                    return b.grade_counts.ssh - a.grade_counts.ssh;
+                                
+                                case "SS":
+                                    return b.grade_counts.ss - a.grade_counts.ss;
+                                
+                                case "SH":
+                                    return b.grade_counts.sh - a.grade_counts.sh;
+                                
+                                case "S":
+                                    return b.grade_counts.s - a.grade_counts.s;
+                                
+                                case "A":
+                                    return b.grade_counts.a - a.grade_counts.a;
+                                
+                                case "Maximum Combo":
+                                    return b.maximum_combo - a.maximum_combo;
+                                
+                                case "Total Hits":
+                                    return b.total_hits - a.total_hits;
+                                
+                                case "Post Count":
+                                    return b.post_count - a.post_count;
+                                
+                                case "Follower Count":
+                                    return b.follower_count - a.follower_count;
+                                
+                                case "Map Follower Count":
+                                    return b.mapping_follower_count - a.mapping_follower_count;
+                                
+                                case "Kudosu Total":
+                                    return b.kudosu.total - a.kudosu.total;
+                                
+                                case "Kudosu Available":
+                                    return b.kudosu.available - a.kudosu.available;
+                                
+                                case "Ranked Map Count":
+                                    return b.ranked_beatmapset_count - a.ranked_beatmapset_count;
+                                
+                                case "Loved Map Count":
+                                    return b.loved_beatmapset_count - a.loved_beatmapset_count;
+                                
+                                case "Graved and Pending Map Count":
+                                    return (b.graveyard_beatmapset_count + b.pending_beatmapset_count) - (a.graveyard_beatmapset_count + a.pending_beatmapset_count);
+                                
+                                case "Medal Count":
+                                    return b.user_achievements.length - a.user_achievements.length;
+                            }
+                        });
+                        
+                        var searchuser = false;
+                        var j = 0;
+                        if (sorting == "User") {
+                            for (j = 0; j < data.length; j++) {
+                                if (data[j].user.username.toLowerCase() == localStorage.getItem('userby').toLowerCase()) {
+                                    i = j;
+                                    searchuser = true;
+                                    break;
+                                }
+                            }
+                            if (!searchuser) {
+                                return;
+                            }
+                        }
+                        for (var i = 50 * parseInt(localStorage.getItem("page")); i < 50 * (parseInt(localStorage.getItem("page")) + 1); i++) {
+                            if (searchuser) {
+                                i = j;
+                            }
+                            var tblRow = "<tr>"
+                                + "<td>" + (i + 1).toLocaleString() + "</td>"
+                                + "<td>#" + data[i].global_rank.toLocaleString() + " (" + Math.floor(data[i].pp).toLocaleString() + " pp)</td>"
+                                + "<td>" + data[i].user.country.name + "</td>"
+                                + "<td><a id=\"usrid\" href=\"https://osu.ppy.sh/users/" + data[i].user.id + "\">" + data[i].user.username + "</a></td>"
+                                + "<td>" + data[i].level.current + " (" + data[i].level.progress + "%) </td>"
+                                + "<td>" + data[i].play_count.toLocaleString() + "</td>"
+                                + "<td>" + (data[i].play_time / 60 / 60).toLocaleString() + " hrs</td>"
+                                + "<td>" + data[i].replays_watched_by_others.toLocaleString() + "</td>"
+                                + "<td>" + data[i].scores_first_count.toLocaleString() + "</td>"
+                                + "<td>" + data[i].ranked_score.toLocaleString() + "</td>"
+                                + "<td>" + data[i].total_score.toLocaleString() + "</td>"
+                                + "<td>" + data[i].grade_counts.ssh.toLocaleString() + "</td>"
+                                + "<td>" + data[i].grade_counts.ss.toLocaleString() + "</td>"
+                                + "<td>" + data[i].grade_counts.sh.toLocaleString() + "</td>"
+                                + "<td>" + data[i].grade_counts.s.toLocaleString() + "</td>"
+                                + "<td>" + data[i].grade_counts.a.toLocaleString() + "</td>"
+                                + "<td>" + data[i].maximum_combo.toLocaleString() + "x</td>"
+                                + "<td>" + data[i].total_hits.toLocaleString() + "</td>"
+                                + "<td>" + data[i].post_count.toLocaleString() + "</td>"
+                                + "<td>" + data[i].follower_count.toLocaleString() + "</td>"
+                                + "<td>" + data[i].mapping_follower_count.toLocaleString() + "</td>"
+                                + "<td>" + data[i].kudosu.total.toLocaleString() + "</td>"
+                                + "<td>" + data[i].kudosu.available.toLocaleString() + "</td>"
+                                + "<td>" + data[i].ranked_beatmapset_count.toLocaleString() + "</td>"
+                                + "<td>" + data[i].loved_beatmapset_count.toLocaleString() + "</td>"
+                                + "<td>" + (data[i].graveyard_beatmapset_count + data[i].pending_beatmapset_count).toLocaleString() + "</td>"
+                                + "<td>" + data[i].user_achievements.length.toLocaleString() + "</td>"
+                            $(tblRow).appendTo("#userdata tbody");
+                            if (sorting == "User") {
+                                break;
+                            }
+                        }
+                    });
+                });
+
+                $('#cNext').click(function(){
+                    localStorage.setItem("page", parseInt(localStorage.getItem("page")) + 1);
+                    $('#getJson').click();
+                });
+                if (!(window.location.href.split('#').length > 1)) {
+                    localStorage.clear();
+                    localStorage.setItem("sortby", "Global Rank");
+                    window.location.href = "#";
+                }
+                $('#cNext').click();
+                localStorage.setItem("page", 0);
+            });
+        </script>
+    </head>
+    <body>
+        <div id="header"></div>
+        <div style="display: none" id="getJson"></div>
+        <h1 id="back"><a href=".">Back</a></h1>
+        <h1 id="title">Rankings</h1>
+        <h1 id="lUpdate"></h1>
+        <h1 id="dAmount"></h1>
+        <h1 id="cSorted"></h1>
+        <input type="text" placeholder="Search.." id="uSearch">
+        <button type="button" onclick="localStorage.setItem('sortby', 'User'); localStorage.setItem('userby', document.getElementById('uSearch').value); window.location.reload();">Search</button>
+        <table id= "userdata" border="2">
+            <thead>
+                <th>Count</th>
+                <th>Global Rank<button type="button" onclick="localStorage.setItem('sortby', 'Global Rank'); window.location.reload();">/\</button></th>
+                <th>Country<button type="button" onclick="localStorage.setItem('sortby', 'Country'); window.location.reload();">/\</button></th>
+                <th>Name<button type="button" onclick="localStorage.setItem('sortby', 'Name'); window.location.reload();">/\</button></th>
+                <th>Level<button type="button" onclick="localStorage.setItem('sortby', 'Level'); window.location.reload();">/\</button></th>
+                <th>Playcount<button type="button" onclick="localStorage.setItem('sortby', 'Playcount'); window.location.reload();">/\</button></th>
+                <th>Playtime<button type="button" onclick="localStorage.setItem('sortby', 'Playtime'); window.location.reload();">/\</button></th>
+                <th>Replays Watched<button type="button" onclick="localStorage.setItem('sortby', 'Replays Watched'); window.location.reload();">/\</button></th>
+                <th>First Place<button type="button" onclick="localStorage.setItem('sortby', 'First Place'); window.location.reload();">/\</button></th>
+                <th>Ranked Score<button type="button" onclick="localStorage.setItem('sortby', 'Ranked Score'); window.location.reload();">/\</button></th>
+                <th>Total Score<button type="button" onclick="localStorage.setItem('sortby', 'Total Score'); window.location.reload();">/\</button></th>
+                <th>SSH<button type="button" onclick="localStorage.setItem('sortby', 'SSH'); window.location.reload();">/\</button></th>
+                <th>SS<button type="button" onclick="localStorage.setItem('sortby', 'SS'); window.location.reload();">/\</button></th>
+                <th>SH<button type="button" onclick="localStorage.setItem('sortby', 'SH'); window.location.reload();">/\</button></th>
+                <th>S<button type="button" onclick="localStorage.setItem('sortby', 'S'); window.location.reload();">/\</button></th>
+                <th>A<button type="button" onclick="localStorage.setItem('sortby', 'A'); window.location.reload();">/\</button></th>
+                <th>Maximum Combo<button type="button" onclick="localStorage.setItem('sortby', 'Maximum Combo'); window.location.reload();">/\</button></th>
+                <th>Total Hits<button type="button" onclick="localStorage.setItem('sortby', 'Total Hits'); window.location.reload();">/\</button></th>
+                <th>Post Count<button type="button" onclick="localStorage.setItem('sortby', 'Post Count'); window.location.reload();">/\</button></th>
+                <th>Follower Count<button type="button" onclick="localStorage.setItem('sortby', 'Follower Count'); window.location.reload();">/\</button></th>
+                <th>Map Follower Count<button type="button" onclick="localStorage.setItem('sortby', 'Map Follower Count'); window.location.reload();">/\</button></th>
+                <th>Kudosu Total<button type="button" onclick="localStorage.setItem('sortby', 'Kudosu Total'); window.location.reload();">/\</button></th>
+                <th>Kudosu Available<button type="button" onclick="localStorage.setItem('sortby', 'Kudosu Available'); window.location.reload();">/\</button></th>
+                <th>Ranked Map Count<button type="button" onclick="localStorage.setItem('sortby', 'Ranked Map Count'); window.location.reload();">/\</button></th>
+                <th>Loved Map Count<button type="button" onclick="localStorage.setItem('sortby', 'Loved Map Count'); window.location.reload();">/\</button></th>
+                <th>Graved and Pending Map Count<button type="button" onclick="localStorage.setItem('sortby', 'Graved and Pending Map Count'); window.location.reload();">/\</button></th>
+                <th>Medal Count<button type="button" onclick="localStorage.setItem('sortby', 'Medal Count'); window.location.reload();">/\</button></th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button type="button" id="cNext">Show More</button>
+    </body>
+</html>
