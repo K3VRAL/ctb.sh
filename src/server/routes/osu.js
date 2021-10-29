@@ -10,7 +10,9 @@ new Promise((resolve) => {
         }
         let arr = []
         for (let i = 0; i < result.length; i++) {
-            arr.push(result[i]['Tables_in_ctbsh_database']);
+            if (result[i]['Tables_in_ctbsh_database'].charAt(0) != '_') {
+                arr.push(result[i]['Tables_in_ctbsh_database']);
+            }
         }
         resolve(arr);
     });
