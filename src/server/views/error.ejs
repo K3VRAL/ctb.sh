@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <%- include('../partials/head'); %>
+        <link rel="stylesheet" type="text/css" href="/css/error.css">
+    </head>
+    <body>
+        <%- include('../partials/navigation'); %>
+        <p id='perror'><%= error %></p>
+        <p id='perrorwhat'>what in the world is '<%= whatsthis %>'?</p>
+    </body>
+</html>

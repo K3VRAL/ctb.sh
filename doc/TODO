@@ -10,3 +10,10 @@ Map out how the SQL databases will work
 Make documentation to use:
     - .env
     - mysql/mariadb
+
+Idea for verifying that might not work; get code after user authenticates,
+use code to get oauth then eventually /me/fruits from osu api and see if pp is above 2500.
+If so, then they are qualified to edit data on the website so store a cookie that will expire after 24 hours.
+Once the cookie expires or is just not generally in where the cookies should be at, the website will ask for the user
+to reauthenticate again through osu again.
+THE DATA STORED IN MYSQL WILL BE (fuck now I don't know how to store relevant data without storing the private ones)

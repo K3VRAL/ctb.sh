@@ -1,8 +1,7 @@
 let router = require('express').Router();
 let request = require('request');
 require('dotenv').config();
-let pool = require('../extras/localapi');
-let posting = require('../extras/sqlposting');
+let pool = require('../controllers/localapi');
 
 new Promise((resolve) => {
     pool.query('SHOW tables', (err, result) => {
@@ -16,6 +15,12 @@ new Promise((resolve) => {
         resolve(arr);
     });
 }).then((tablelist) => {
+    let discord_servers = tablelist[0],
+        external_websites = tablelist[1], 
+        github_projects = tablelist[2], 
+        twitch_streamers = tablelist[3], 
+        youtube_creators = tablelist[4];
+
     router.get('/', (req, res) => {
         new Promise((resolve) => {
             let newresult = [];
@@ -33,7 +38,6 @@ new Promise((resolve) => {
         });
     });
 
-    let discord_servers = tablelist[0];
     router.get(`/${discord_servers}`, (req, res) => {
         pool.query(`SELECT * FROM ${discord_servers}`, (err, result) => {
             if (err) {
@@ -51,11 +55,7 @@ new Promise((resolve) => {
             });
         });
     });
-    // router.post(`/${discord_servers}`, (req, res) => {
-    //     posting(req, res, `${discord_servers}`);
-    // });
 
-    let external_websites = tablelist[1];
     router.get(`/${external_websites}`, (req, res) => {
         pool.query(`SELECT * FROM ${external_websites}`, (err, result) => {
             if (err) {
@@ -74,11 +74,7 @@ new Promise((resolve) => {
             });
         });
     });
-    // router.post(`/${external_websites}`, (req, res) => {
-    //     posting(req, res, `${external_websites}`);
-    // });
 
-    let github_projects = tablelist[2];
     router.get(`/${github_projects}`, (req, res) => {
         pool.query(`SELECT * FROM ${github_projects}`, (err, result) => {
             if (err) {
@@ -97,11 +93,7 @@ new Promise((resolve) => {
             });
         });
     });
-    // router.post(`/${github_projects}`, (req, res) => {
-    //     posting(req, res, `${github_projects}`);
-    // });
 
-    let twitch_streamers = tablelist[3];
     router.get(`/${twitch_streamers}`, (req, res) => {
         pool.query(`SELECT * FROM ${twitch_streamers}`, (err, result) => {
             if (err) {
@@ -120,11 +112,7 @@ new Promise((resolve) => {
             });
         });
     });
-    // router.post(`/${twitch_streamers}`, (req, res) => {
-    //     posting(req, res, `${twitch_streamers}`);
-    // });
 
-    let youtube_creators = tablelist[4];
     router.get(`/${youtube_creators}`, (req, res) => {
         pool.query(`SELECT * FROM ${youtube_creators}`, (err, result) => {
             if (err) {
@@ -135,7 +123,16 @@ new Promise((resolve) => {
             // new Promise((resolve) => {
             //     let newresult = [];
             //     for (let i = 0; i < result.length; i++) {
-            //         request.get({url: 'https://www.googleapis.com/youtube/v3/channels', qs: { part: 'statistics', key: process.env.YT_KEY, id: result[i].link.split('/')[result[i].link.split('/').length-1] }, json: true }, (err, res, body) => {
+            //         let data = {
+            //             url: 'https://www.googleapis.com/youtube/v3/channels',
+            //             qs: {
+            //                 part: 'statistics',
+            //                 key: process.env.YT_KEY,
+            //                 id: result[i].link.split('/')[result[i].link.split('/').length-1]
+            //             },
+            //             json: true
+            //         }
+            //         request.get(data, (err, res, body) => {
             //             if (err) {
             //                 throw err;
             //             }
@@ -149,9 +146,6 @@ new Promise((resolve) => {
             res.render('./pages/osu/index', { currpage: 'YouTube Creators', pages: result, addata: true });
         });
     });
-    // router.post(`/${youtube_creators}`, (req, res) => {
-    //     posting(req, res, ${youtube_creators});
-    // });
 });
 
 module.exports = router;

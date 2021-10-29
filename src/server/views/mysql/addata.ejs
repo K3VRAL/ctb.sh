@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <%- include('../../partials/head'); %>
+        <link rel="stylesheet" type="text/css" href="/css/auth.css">
+    </head>
+    <body>
+        <% for (let data in datas) { %>
+            <%- datas[data] %>
+        <% } %>
+    </body>
+</html>

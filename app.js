@@ -22,7 +22,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/', require('./src/server/routes/index'));
 app.use('/osu', require('./src/server/routes/osu'));
 app.use('/malody', require('./src/server/routes/malody'));
-app.use(require('./src/server/routes/404'));
+app.use('/auth', require('./src/server/routes/auth'));
+app.use(require('./src/server/routes/error'));
 
 // Listening
 app.listen(app.get('port'), () => {

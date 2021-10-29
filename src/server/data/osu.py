@@ -63,11 +63,11 @@ def RequestingData():
         'Accept'        : 'application/json',
         'Authorization' : os.getenv('OAPI_TOKEN_TYPE') + ' ' + os.getenv('OAPI_ACCESS_TOKEN')
     }
-    r = requests.get(baseurl + 'rankings/fruits/performance?filter=all&cursor[page]=1', headers=headers)
+    r = requests.get(baseurl + 'me/fruits', headers=headers)
     if r.ok:
         # TODO this
         print(r)
-        print(r.json())
+        # print(r.json())
     else:
         print('Failed Requesting Data: ' + str(r))
         exit(1)
