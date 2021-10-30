@@ -4,12 +4,22 @@ In this document, you will learn and see how easy it is to be able to get access
 **NOTE: If you intend to learn more about why there are this specific parameters we must take to get said data, I would recommend you look into the [osu!web Documentation](https://osu.ppy.sh/docs/index.html), and even still, you will be using the Documenation a lot to make specific requests so it is still recommended that you use it.**
 
 ## Table of Contents
+**[Getting started](#getting-started)**
 
+**[New OAuth Application](#new-oauth-application)**
+
+**[Client Credentials Grant](#client-credentials-grant)**
+
+**[Using the Access Token](#using-the-access-token)**
+
+**[I want me some data](#i-want-me-some-data)**
+
+**[FAQs](#faqs)**
 
 ## Getting started
 For the sake of simplicity, the program for this guide that will be used is [Insomnia](https://insomnia.rest/). It's a great program to easily make requests to a website.
 
-If you want to use a programming language instead, that is also doable but it is mandatory that the programming language also has a library to make said GET, POST, etc requests. I have written a [python script](https://github.com/K3VRAL/ctb.sh/blob/master/src/server/data/osu.py) (if you wish to use it as an example or your main script) with the use of an .env file to hide the sensitive data from this git project; though you can modify the variables to your suiting if you wish not to use [Insomnia](https://insomnia.rest/).
+If you want to use a programming language instead, that is also doable but it is mandatory that the programming language also has a library to make said GET, POST, etc requests. I have written a [python script](https://github.com/K3VRAL/ctb.sh/blob/master/src/server/data/osu.py) (if you wish to use it as an example or your main script) with the use of an .env file to hide the sensitive data from this git project; though you can modify the variables to your suiting if you wish not to use Insomnia.
 
 Open up Insomnia, on the right click on the white circle with the plus sign in the middle and click on 'New Request' (or do CTRL-N), name your project what ever you want as this doesn't really matter (you can also ignore the field with GET, POST, etc as you can change this whenever you want, this is explained after), and you should have your Insomnia workspace set up to make requests. Good job!
 
@@ -63,11 +73,11 @@ Before we continue any further, the base URL as stated in the Documentation is *
 
 One last thing, when we make **GET** requests, it's also possible that we may accidentally get the HTML data as well which is not what we want, so in the 'Header', the only things we should include is **Content-Type** with **application/json**, **Accept** with **application/json** (what this means is that we only request for JSON data, not the website itself), and finally, the most important, **Authorization** with **Bearer LoooooooooooooooooongString**, and that should be just about it unless the documentation requests more information to be inputted in the 'Header'.
 
-### Examples
+### Example
 Let's say I want a list of users from a specific country. Under 'Rankings' in the documentation, it states that it wants a **GET** request with the URL of **/rankings/{mode}/{type}** with some optional Query parameters. Let's say I want the mode to be 'osu!catch', the type to be 'performance' and the country to be targetted to be 'Korea'.
 
 In Insomnia, the method will be a **GET**, the URL will be **https://osu.ppy.sh/api/v2/rankings/fruits/performance**, and finally, in the 'Query' section, we add a new name with **country** and the value as **KR** (it is required that the value to be the Country Code).
 
 ## FAQs
-### I do everything said but I keep getting an error every time I try to **GET** some data. Why's that?
+### This worked for be before but now everytime I make a **GET** request, it keeps giving me an error. Why's that?
 It may be possible that your token expired; when we request for the access token, we get 3 values, one of them in 'expires_in' where the value is given in seconds. This tells the user how long until the token is usable for until not. It's basically a password that gives rights to get data that also eventually decays. To get around this issue, repeat from **Client Credentials Grant** and below.
