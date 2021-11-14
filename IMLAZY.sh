@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 if ! test -f "./package.json"; then
 	echo "cannot find package.json in folder. Please go to the correct directory."
 	exit 2
