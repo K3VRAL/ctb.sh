@@ -32,7 +32,7 @@ def MalodyRankings(data, table):
                 players[i]['score'] = str(int(data[x]['data'][y]['score']) + int(players[i]['score']))
                 players[i]['combo'] = str(int(data[x]['data'][y]['combo']) + int(players[i]['combo']))
                 players[i]['acc'] = '{}%'.format(round((float(data[x]['data'][y]['acc'].strip('%')) + float(players[i]['acc'].strip('%'))) / 2, 2))
-                # players[i]['mod'] += data[x]['data'][y]['mod'] # TODO add amount of mod usage
+                # players[i]['mods'] += data[x]['data'][y]['mods'] # TODO mod usage and count
                 tdata = data[x]['data'][y]['title'].split('/')
                 tplyr = players[i]['title'].split('/')
                 players[i]['title'] = '{}/{}/{}/{}'.format(int(tdata[0]) + int(tplyr[0]), int(tdata[1]) + int(tplyr[1]), int(tdata[2]) + int(tplyr[2]), int(tdata[3]) + int(tplyr[3]))
@@ -79,6 +79,7 @@ def MalodyRankings(data, table):
     sqldata['i_data'] = i_data
     return sqldata
 
+# What a fucking nightmare
 def RequestingChart(data, pc = False):
     headers = {
         'Content-Type'  : 'application/json',
@@ -117,7 +118,7 @@ def RequestingChart(data, pc = False):
                     store['score'] = j.find(class_ = 'score').text
                     store['combo'] = j.find(class_ = 'combo').text
                     store['acc'] = j.find(class_ = 'acc').em.text
-                    smod = ''
+                    smod = '' # TODO mod usage and count
                     if j.find(class_ = 'mod').text != 'None':
                         for k in j.find(class_ = 'mod'):
                             smod += '{}-'.format(list(k.attrs.keys())[len(list(k.attrs.keys()))-1][6:])
@@ -131,9 +132,10 @@ def RequestingChart(data, pc = False):
         else:
             print('Failed Requesting Chart: ' + str(r))
             exit(1)
+    print('DELDATA:\t{}'.format(deldata))
     if deldata:
         for i in range(0, len(deldata)):
-            del data[i]
+            del data[deldata[i]]
     print()
     return data
 
@@ -149,7 +151,7 @@ def RequestingChartList():
     }
     tpages = requests.get('https://m.mugzone.net/page/chart/filter', headers=headers, params=params).json()['data']['total']
     data = []
-    for i in range(0, tpages + 1):
+    for i in range(0, tpages):
         params['page'] = i
         r = requests.get('https://m.mugzone.net/page/chart/filter', headers=headers, params=params)
         print('ReqChartList\t-\t{}\t-\t{}'.format(i, r), end = '\r')
