@@ -1,7 +1,7 @@
 # ctb.sh
 I've decided that I will do a redo of the original static website and make a more dynamic version.
 
-# [LIVE TEST/DEMO](test.ctb.sh)
+### [LIVE TEST/DEMO](test.ctb.sh) - may be offile if server is under maintenance
 
 ## Table of Contents
 
