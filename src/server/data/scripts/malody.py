@@ -134,7 +134,6 @@ def RequestingChart(data, pc = False):
         else:
             print('Failed Requesting Chart: ' + str(r))
             exit(1)
-    print('DELDATA:\t{}'.format(deldata))
     if deldata:
         for i in range(0, len(deldata)):
             del data[deldata[i]]
