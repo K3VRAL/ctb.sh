@@ -9,7 +9,6 @@ import bs4
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import controlr
 
-# TODO fix something is wrong with mysql
 def MalodyRankings(data, table):
     table_done = True
     c_table = ''
@@ -51,13 +50,17 @@ def MalodyRankings(data, table):
         if table_done:
             keys = list(players[0].keys())
             for z in range(0, len(keys)):
-                c_table += '{} TEXT, '.format(keys[z])
-                i_table += '{}, '.format(keys[z])
+                if (keys[z] == 'mod'): # Apparently mysql can't have 'mod' as a name, that's stupid lol
+                    c_table += 'mods TEXT, '
+                    i_table += 'mods, '
+                else:
+                    c_table += '{} TEXT, '.format(keys[z])
+                    i_table += '{}, '.format(keys[z])
             c_table = c_table[:len(c_table)-2]
             i_table = i_table[:len(i_table)-2]
             table_done = False
 
-    for i in range(0, len(players)):
+    for i in range(0, len(players)): # TODO remove this
         for j in range(0, len(players)):
             if i != j and players[i] == players[j]:
                 print('FOUND DUPLICATE: {} - {}'.format(i, j))
@@ -85,12 +88,14 @@ def RequestingChart(data, pc = False):
         'html'          : 1,
         'from'          : 1
     }
+    mpname = 'Mobile'
     if pc:
         params['from'] = 0
+        mpname = 'PC'
     deldata = []
     for i in range(0, len(data)):
         r = requests.get('https://m.mugzone.net/score/{}'.format(data[i]['id']), headers=headers, params=params)
-        print('ReqChart\t-\t{}\t-\t{}'.format(i, r), end = '\r')
+        print('ReqChart{}\t-\t{}\t-\t{}'.format(mpname, i, r), end = '\r')
         if r.ok and r.status_code == 200 and 'code' in r.json():
             if 'data' in r.json():
                 soup = bs4.BeautifulSoup(r.json()['data'].replace('\n', '').replace('\t', '').replace('\"', ''), 'html.parser')
@@ -126,8 +131,9 @@ def RequestingChart(data, pc = False):
         else:
             print('Failed Requesting Chart: ' + str(r))
             exit(1)
-    for i in deldata:
-        del data[i]
+    if deldata:
+        for i in range(0, len(deldata)):
+            del data[i]
     print()
     return data
 
@@ -143,7 +149,7 @@ def RequestingChartList():
     }
     tpages = requests.get('https://m.mugzone.net/page/chart/filter', headers=headers, params=params).json()['data']['total']
     data = []
-    for i in range(0, 2): # TODO tpages + 1):
+    for i in range(0, tpages + 1):
         params['page'] = i
         r = requests.get('https://m.mugzone.net/page/chart/filter', headers=headers, params=params)
         print('ReqChartList\t-\t{}\t-\t{}'.format(i, r), end = '\r')

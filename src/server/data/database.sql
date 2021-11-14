@@ -6,3 +6,9 @@ CREATE TABLE osu_external_websites(id SERIAL UNIQUE, name TEXT NOT NULL, link TE
 CREATE TABLE osu_github_projects(id SERIAL UNIQUE, name TEXT NOT NULL, link TEXT NOT NULL);
 CREATE TABLE osu_twitch_streamers(id SERIAL UNIQUE, name TEXT NOT NULL, link TEXT NOT NULL);
 CREATE TABLE osu_youtube_creators(id SERIAL UNIQUE, name TEXT NOT NULL, link TEXT NOT NULL);
+
+CREATE TABLE malody_discord_servers(id SERIAL UNIQUE, name TEXT NOT NULL, link TEXT NOT NULL);
+CREATE TABLE malody_external_websites(id SERIAL UNIQUE, name TEXT NOT NULL, link TEXT NOT NULL);
+CREATE TABLE malody_github_projects(id SERIAL UNIQUE, name TEXT NOT NULL, link TEXT NOT NULL);
+CREATE TABLE malody_twitch_streamers(id SERIAL UNIQUE, name TEXT NOT NULL, link TEXT NOT NULL);
+CREATE TABLE malody_youtube_creators(id SERIAL UNIQUE, name TEXT NOT NULL, link TEXT NOT NULL);

@@ -4,7 +4,6 @@ let pool = require('../controllers/localapi');
 
 // TODO make checks with osu! and given table for verification that this isn't abused
 router.post('/addata', (req, res) => {
-    console.log(req.body);
     let datas = [];
     new Promise((resolve, reject) => {
         if (req.body['name'] != undefined) {
