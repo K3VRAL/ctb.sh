@@ -1,7 +1,9 @@
 #!/bin/bash
-
-if ! test -f "./package.json"; then
-	echo "cannot find package.json in folder. Please go to the correct directory."
+if [ ! `id -u` -eq 0 ]; then
+	echo "\n\nPlease run in sudo. This is mandatory to installing and running files."
+	exit 1
+elif ! test -f "./package.json"; then
+	echo "\n\nCannot find package.json in folder. Please go to the correct directory."
 	exit 2
 else
 	echo "\n\nInstalling packages";
