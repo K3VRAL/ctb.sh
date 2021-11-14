@@ -166,15 +166,24 @@ def RequestingChartList():
     print()
     return data
 
+class flags:
+    request = False
+
 def main(argv):
-    if argv[0] == 'r':
+    for i in argv:
+        if i[0] == '-':
+            if i == '-r' or i == '--request':
+                flags.request = True
+
+    if flags.request:
         t1 = time.time()
         charts = RequestingChartList()
         controlr.AddingToMySQL(MalodyRankings(RequestingChart(charts), 'malody_mobile_rankings'))
         controlr.AddingToMySQL(MalodyRankings(RequestingChart(charts, True), 'malody_pc_rankings'))
         t2 = time.time()
         print('Took {} seconds'.format(round(t2 - t1, 2)))
-    else:
+    
+    if not (flags.request):
         print('Did nothing.')
         exit(1)
 
