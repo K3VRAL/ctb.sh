@@ -1,4 +1,4 @@
-# How osu!api-v2 works
+# How osu!api-v2 with Client Credentials works
 In this document, you will learn and see how easy it is to be able to get access to osu!'s api v2 through the use of registering an OAuth application, using a Client Credentials Grant, and finally gathering data.
 
 **NOTE: If you intend to learn more about why there are this specific parameters we must take to get said data, I would recommend you look into the [osu!web Documentation](https://osu.ppy.sh/docs/index.html), and even still, you will be using the Documenation a lot to make specific requests so it is still recommended that you use it.**

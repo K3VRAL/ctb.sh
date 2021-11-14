@@ -1,7 +1,10 @@
 let router = require('express').Router();
-let request = require('request');
+// let request = require('request');
 require('dotenv').config();
 let pool = require('../controllers/localapi');
+let specific = require('../controllers/specificdata');
+let title = require('../controllers/titleformat');
+let type = 'osu';
 
 new Promise((resolve) => {
     pool.query('SHOW tables', (err, result) => {
@@ -14,14 +17,15 @@ new Promise((resolve) => {
                 arr.push(result[i]['Tables_in_ctbsh_database']);
             }
         }
-        resolve(arr);
+        resolve(specific.data(arr, type));
     });
 }).then((tablelist) => {
-    let discord_servers = tablelist[0],
-        external_websites = tablelist[1], 
-        github_projects = tablelist[2], 
-        twitch_streamers = tablelist[3], 
-        youtube_creators = tablelist[4];
+    let discord_servers = 'discord_servers',
+        external_websites = 'external_websites', 
+        github_projects = 'github_projects', 
+        twitch_streamers = 'twitch_streamers', 
+        youtube_creators = 'youtube_creators',
+        rankings = 'rankings';
 
     router.get('/', (req, res) => {
         new Promise((resolve) => {
@@ -41,17 +45,12 @@ new Promise((resolve) => {
     });
 
     router.get(`/${discord_servers}`, (req, res) => {
-        pool.query(`SELECT * FROM ${discord_servers}`, (err, result) => {
+        pool.query(`SELECT * FROM ${type}_${discord_servers}`, (err, result) => {
             if (err) {
                 throw err;
             }
             new Promise((resolve) => {
-                let splitting = discord_servers.split('_');
-                let newstring = '';
-                for (let i = 0; i < splitting.length; i++) {
-                    newstring += splitting[i].charAt(0).toUpperCase() + splitting[i].slice(1) + ' ';
-                }
-                resolve(newstring.slice(0, newstring.length-1));
+                resolve(title.format(discord_servers));
             }).then((msg) => {
                 res.render('./pages/osu/index', { currpage: msg, pages: result, addata: true });
             });
@@ -59,18 +58,13 @@ new Promise((resolve) => {
     });
 
     router.get(`/${external_websites}`, (req, res) => {
-        pool.query(`SELECT * FROM ${external_websites}`, (err, result) => {
+        pool.query(`SELECT * FROM ${type}_${external_websites}`, (err, result) => {
             if (err) {
                 throw err;
             }
 
             new Promise((resolve) => {
-                let splitting = external_websites.split('_');
-                let newstring = '';
-                for (let i = 0; i < splitting.length; i++) {
-                    newstring += splitting[i].charAt(0).toUpperCase() + splitting[i].slice(1) + ' ';
-                }
-                resolve(newstring.slice(0, newstring.length-1));
+                resolve(title.format(external_websites));
             }).then((msg) => {
                 res.render('./pages/osu/index', { currpage: msg, pages: result, addata: true });
             });
@@ -78,18 +72,13 @@ new Promise((resolve) => {
     });
 
     router.get(`/${github_projects}`, (req, res) => {
-        pool.query(`SELECT * FROM ${github_projects}`, (err, result) => {
+        pool.query(`SELECT * FROM ${type}_${github_projects}`, (err, result) => {
             if (err) {
                 throw err;
             }
 
             new Promise((resolve) => {
-                let splitting = github_projects.split('_');
-                let newstring = '';
-                for (let i = 0; i < splitting.length; i++) {
-                    newstring += splitting[i].charAt(0).toUpperCase() + splitting[i].slice(1) + ' ';
-                }
-                resolve(newstring.slice(0, newstring.length-1));
+                resolve(title.format(github_projects));
             }).then((msg) => {
                 res.render('./pages/osu/index', { currpage: msg, pages: result, addata: true });
             });
@@ -97,18 +86,13 @@ new Promise((resolve) => {
     });
 
     router.get(`/${twitch_streamers}`, (req, res) => {
-        pool.query(`SELECT * FROM ${twitch_streamers}`, (err, result) => {
+        pool.query(`SELECT * FROM ${type}_${twitch_streamers}`, (err, result) => {
             if (err) {
                 throw err;
             }
 
             new Promise((resolve) => {
-                let splitting = twitch_streamers.split('_');
-                let newstring = '';
-                for (let i = 0; i < splitting.length; i++) {
-                    newstring += splitting[i].charAt(0).toUpperCase() + splitting[i].slice(1) + ' ';
-                }
-                resolve(newstring.slice(0, newstring.length-1));
+                resolve(title.format(twitch_streamers));
             }).then((msg) => {
                 res.render('./pages/osu/index', { currpage: msg, pages: result, addata: true });
             });
@@ -116,7 +100,7 @@ new Promise((resolve) => {
     });
 
     router.get(`/${youtube_creators}`, (req, res) => {
-        pool.query(`SELECT * FROM ${youtube_creators}`, (err, result) => {
+        pool.query(`SELECT * FROM ${type}_${youtube_creators}`, (err, result) => {
             if (err) {
                 throw err;
             }
@@ -138,14 +122,32 @@ new Promise((resolve) => {
             //             if (err) {
             //                 throw err;
             //             }
-            //             newresult.unshift(body['items'][0]['statistics']['subscriberCount'], body['items'][0]['statistics']['videoCount']);
+            //             newresult.push({ 'name': result[i].name, 'subscriberCount': body['items'][0]['statistics']['subscriberCount'], 'videoCount': body['items'][0]['statistics']['videoCount'] });
             //         });
             //     }
             //     resolve(newresult);
             // }).then((message) => {
             //     console.log(message);
             // });
-            res.render('./pages/osu/index', { currpage: 'YouTube Creators', pages: result, addata: true });
+            new Promise((resolve) => {
+                resolve(title.format(youtube_creators));
+            }).then((msg) => {
+                res.render('./pages/osu/index', { currpage: msg, pages: result, addata: true });
+            });
+        });
+    });
+
+    router.get(`/${rankings}`, (req, res) => {
+        pool.query(`SELECT * FROM ${type}_${rankings}`, (err, result) => {
+            if (err) {
+                throw err;
+            }
+            
+            new Promise((resolve) => {
+                resolve(title.format(rankings));
+            }).then((msg) => {
+                res.render('./pages/osu/rankings', { currpage: msg, datas: result });
+            });
         });
     });
 });

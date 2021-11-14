@@ -13,6 +13,8 @@
         document.getElementById('addataclose').onclick = function() {
             modalAD.style.display = 'none';
         }
+
+        document.getElementById('ftarget').setAttribute('value', `${window.location.href.split('/')[window.location.href.split('/').length-2]}_${window.location.href.split('/')[window.location.href.split('/').length-1]}`);
     });
 
     let hideLink = ((e) => {
@@ -35,6 +37,7 @@
             </select>
             <label for='fname' id='fpstyle'>Name: </label><input id='fname' type='text' name='name'>
             <label for='flink' id='fpstyle' class='deletemethod'>Link: </label><input id='flink' class='deletemethod' type='text' name='link'>
+            <input id='ftarget' type='hidden' name='target'>
             <p id='fpstyle'>NOTE: This works but is very easy to abuse so it will be disabled for the time being.</p>
             <input type='submit' value='Submit Data'>
         </form>

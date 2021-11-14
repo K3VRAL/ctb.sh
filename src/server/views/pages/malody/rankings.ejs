@@ -1,3 +1,4 @@
+<!-- TODO format json -->
 <!DOCTYPE html>
 <html lang='en'>
     <head>
@@ -6,13 +7,9 @@
     </head>
     <body>
         <%- include('../../../partials/navigation'); %>
-        <% if (addata) { %>
-            <%- include('../../../partials/addata'); %>
-        <% } %>
         <h1 id="title"><%= currpage %></h1>
-        <div class="tiles">
-            <% for (let page in pages) { %>
-                <a class="tile" href='<%= pages[page].link %>'><%= pages[page].name %></a>
-            <% } %>
+        <% for (let data in datas) { %>
+            <p><%= JSON.stringify(datas[data]) %></p>
+        <% } %>
     </body>
 </html>

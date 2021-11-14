@@ -1,17 +1,17 @@
 html, body {
-    background-color: #111111;
+    background-color: #644ca8;
 }
 
 #title {
     text-align: center;
     font-size: 50px;
-    color: #ffffff;
+    color: black;
 }
 
 .tiles {
     display: flex;
     flex-wrap: wrap;
-    background-color: #111111;
+    background-color: #644ca8;
 }
 
 .tile {
@@ -19,11 +19,11 @@ html, body {
     padding: 20px;
     flex-basis: 15%;
     font-size: 20px;
-    background-color: #222222;
-    border: 1px solid white;
+    background-color: #8775b8;
+    border: 2px solid black;
     border-radius: 3px;
-    box-shadow: 5px 10px white;
-    color: white;
+    box-shadow: 5px 10px black;
+    color: black;
     cursor: pointer;
     text-align: center;
     letter-spacing: 2px;
@@ -32,7 +32,7 @@ html, body {
 }
 
 .tile:hover {
-    box-shadow: 0 0 0 5px white;
-    background-color: white;
-    color: black;
+    box-shadow: 0 0 0 5px black;
+    background-color: black;
+    color: white;
 }
