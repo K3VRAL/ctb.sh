@@ -1,6 +1,8 @@
 # ctb.sh
 I've decided that I will do a redo of the original static website and make a more dynamic version.
 
+## [LIVE TEST/DEMO](test.ctb.sh)
+
 ## Table of Contents
 
 **[Installation](#installation)**
@@ -23,4 +25,8 @@ Once done, run `npm start` in the same directory to start the server. There will
 ## Documentation
 Here are some information you may want to use:
 
-- **[How osu!api-v2 with Client Credentials works](./doc/osuapiv2-client.md)**
+### For server implementation
+- **[How the server gathers Malody data](./doc/implement/malody-rankings.md)**
+
+### For learning
+- **[How osu!api-v2 with Client Credentials works](./doc/learn/osuapiv2-client.md)**

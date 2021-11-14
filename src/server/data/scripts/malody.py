@@ -1,3 +1,5 @@
+# TODO allow the ripped data to also be calculated by difficulty and put a ranking
+
 import requests
 import os
 import json
