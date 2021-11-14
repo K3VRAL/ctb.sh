@@ -14,7 +14,9 @@ Make sure you have installed:
 - Node.js/npm
 - MySQL/MariaDB (preferably)
 - Python (also install these packages with `pip`)
-    - dotenv
+    - python-dotenv
+    - beautifulsoup4
+    - mysql-connector-python
 
 First, in the console/terminal, go to the directory with `package.json` and run `npm i`; wait for it to install all the modules (you should see a folder called `node_modules`).
 

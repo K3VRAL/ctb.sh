@@ -84,11 +84,12 @@ def RequestingPage():
         }
         r = requests.get('https://osu.ppy.sh/api/v2/rankings/fruits/performance', headers=headers, params=params)
         print('ReqPage\t-\t{}\t-\t{}'.format(i, r), end = '\r')
-        if r.ok or r.status_code != status_code:
+        if r.ok or r.status_code == 200:
             data.extend(r.json()['ranking'])
             time.sleep(1)
         else:
             print('Failed Requesting Data: ' + str(r))
+            print('This may have to do with the access token being expired. Try running the same script but with argument \'-c\' as well to renew.')
             exit(1)
     print()
     return data
@@ -130,17 +131,31 @@ def Client_OAuthToken():
         print('Failed Posting Client_OAuthToken: ' + str(r))
         exit(1)
 
+class flags:
+    request = False
+    clientToken = False
+    authToken = False
+
 def main(argv):
-    if argv[0] == 'r':
+    for i in argv:
+        if i[0] == '-':
+            if i == '-r' or i == '--request':
+                flags.request = True
+            if i == '-c' or i == '--client':
+                flags.clientToken = True
+            if i == '-a' or i == '--auth':
+                flags.authToken = True
+    if flags.clientToken:
+        controlr.AddingToEnviroment(Client_OAuthToken())
+    if flags.request:
         t1 = time.time()
         controlr.AddingToMySQL(OsuRankings(RequestingProfile(RequestingPage()), 'osu_rankings'))
         t2 = time.time()
         print('Took {} seconds'.format(round(t2 - t1, 2)))
-    elif argv[0] == 'c':
-        controlr.AddingToEnviroment(Client_OAuthToken())
-    elif argv[0] == 'a':
-        Auth_OAuthToken(argv[1])
-    else:
+    if flags.authToken:
+        Auth_OAuthToken(argv[1]) # TODO
+
+    if not (flags.clientToken or flags.request or flags.authToken):
         print('Did nothing.')
         exit(1)
 
