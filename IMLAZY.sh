@@ -34,8 +34,7 @@ else
 	mv .env_template.env .env;
 
 	echo "Editing .env file";
-	nano .env
+	nano .env;
 
-	echo "Finishing. Now starting";
-	npm start;
+	echo "Finished. Now you can do whatever you want.";
 fi
