@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTs ctbsh_database;
 CREATE DATABASE ctbsh_database;
 USE ctbsh_database;
 
