@@ -1,3 +1,4 @@
+import subprocess
 import os
 import json
 import re
@@ -55,3 +56,5 @@ def AddingToMySQL(sqldata):
     cur.close()
 
     db.close()
+
+    subprocess.check_call('npm run reload', shell = True)
