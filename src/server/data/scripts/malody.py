@@ -62,11 +62,6 @@ def MalodyRankings(data, table):
             i_table = i_table[:len(i_table)-2]
             table_done = False
 
-    for i in range(0, len(players)): # TODO remove this
-        for j in range(0, len(players)):
-            if i != j and players[i] == players[j]:
-                print('FOUND DUPLICATE: {} - {}'.format(i, j))
-
     for x in range(0, len(players)):
         i_data.append(('',))
         keys = list(players[x].keys())

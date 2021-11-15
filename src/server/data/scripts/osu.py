@@ -77,7 +77,7 @@ def RequestingPage():
         'Authorization' : os.getenv('OAPI_TOKEN_TYPE') + ' ' + os.getenv('OAPI_ACCESS_TOKEN')
     }
     data = []
-    for i in range(0 + 1, 2 + 1): # TODO 1000 + 1):
+    for i in range(0 + 1, 1000 + 1):
         params = {
             'filter'        : 'all',
             'cursor[page]'  : i
