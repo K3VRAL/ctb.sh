@@ -1,0 +1,25 @@
+table {
+    margin: 0 auto;
+    padding: 0;
+    color: #8775b8;
+    font-size: 20px;
+    border: 1px solid black;
+}
+
+tr {
+    background-color: #8775b8;
+    border-top: 1em solid transparent;
+}
+
+td, th {
+    color: black;
+    border: none;
+    text-align: center;
+}
+
+/* TODO Remove below */
+p {
+    margin: 0;
+    text-align: center;
+    color: black;
+}
