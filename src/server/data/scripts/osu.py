@@ -7,6 +7,10 @@ import time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import controlr
 
+def dprint(prnt, end = ''):
+    if flags.debug:
+        print(prnt, end)
+
 def OsuRankings(data, table):
     table_done = True
     c_table = ''
@@ -50,7 +54,7 @@ def RequestingProfile(data):
     }
     for i in range(0, len(data)):
         r = requests.get('https://osu.ppy.sh/api/v2/users/{}/fruits'.format(data[i]['user']['id']), headers=headers)
-        print('ReqProfile\t-\t{}\t-\t{}'.format(i, r), end = '\r')
+        dprint('ReqProfile\t-\t{}\t-\t{}'.format(i, r), end = '\r')
         if r.ok or r.status_code != status_code:
             del data[i]['is_ranked'], data[i]['user']['avatar_url'], data[i]['user']['country_code'], data[i]['user']['is_active'], data[i]['user']['is_bot'], data[i]['user']['is_deleted'], data[i]['user']['is_online'], data[i]['user']['is_supporter'], data[i]['user']['last_visit'], data[i]['user']['pm_friends_only'], data[i]['user']['profile_colour'], data[i]['user']['cover'], data[i]['user']['country']
             data[i]['scores_first_count'] = r.json()['scores_first_count']
@@ -65,9 +69,9 @@ def RequestingProfile(data):
             data[i]['user_achievements'] = len(r.json()['user_achievements'])
             time.sleep(1)
         else:
-            print('Failed Requesting Profile: ' + str(r))
+            dprint('Failed Requesting Profile: ' + str(r))
             exit(1)
-    print()
+    dprint()
     return data
 
 def RequestingPage():
@@ -83,15 +87,15 @@ def RequestingPage():
             'cursor[page]'  : i
         }
         r = requests.get('https://osu.ppy.sh/api/v2/rankings/fruits/performance', headers=headers, params=params)
-        print('ReqPage\t-\t{}\t-\t{}'.format(i, r), end = '\r')
+        dprint('ReqPage\t-\t{}\t-\t{}'.format(i, r), end = '\r')
         if r.ok or r.status_code == 200:
             data.extend(r.json()['ranking'])
             time.sleep(1)
         else:
-            print('Failed Requesting Data: ' + str(r))
-            print('This may have to do with the access token being expired. Try running the same script but with argument \'-c\' as well to renew.')
+            dprint('Failed Requesting Data: ' + str(r))
+            dprint('This may have to do with the access token being expired. First try running the same script but with argument \'-c\' to renew.')
             exit(1)
-    print()
+    dprint()
     return data
 
 def Auth_OAuthToken(code):
@@ -108,9 +112,9 @@ def Auth_OAuthToken(code):
     }
     r = requests.post('https://osu.ppy.sh/oauth/token', headers=headers, data=json.dumps(bodyparams, separators=(',', ':')))
     if r.ok:
-        print(r.json())
+        dprint(r.json())
     else:
-        print('Failed Posting Client_OAuthToken: ' + str(r))
+        dprint('Failed Posting Client_OAuthToken: ' + str(r))
         exit(1)
 
 def Client_OAuthToken():
@@ -128,13 +132,14 @@ def Client_OAuthToken():
     if r.ok:
         return r.json()
     else:
-        print('Failed Posting Client_OAuthToken: ' + str(r))
+        dprint('Failed Posting Client_OAuthToken: ' + str(r))
         exit(1)
 
 class flags:
     request = False
     clientToken = False
     authToken = False
+    debug = False
 
 def main(argv):
     for i in argv:
@@ -145,18 +150,21 @@ def main(argv):
                 flags.clientToken = True
             if i == '-a' or i == '--auth':
                 flags.authToken = True
+            if i == '-d' or i == '--debug':
+                flags.debug = True
+
     if flags.clientToken:
         controlr.AddingToEnviroment(Client_OAuthToken())
     if flags.request:
         t1 = time.time()
         controlr.AddingToMySQL(OsuRankings(RequestingProfile(RequestingPage()), 'osu_rankings'))
         t2 = time.time()
-        print('Took {} seconds'.format(round(t2 - t1, 2)))
+        dprint('Took {} seconds'.format(round(t2 - t1, 2)))
     if flags.authToken:
         Auth_OAuthToken(argv[1]) # TODO
 
     if not (flags.clientToken or flags.request or flags.authToken):
-        print('Did nothing.')
+        dprint('Did nothing.')
         exit(1)
 
 if __name__ == '__main__':

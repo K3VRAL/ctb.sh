@@ -11,6 +11,10 @@ import bs4
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import controlr
 
+def dprint(prnt, end = ''):
+    if flags.debug:
+        print(prnt, end)
+
 def MalodyRankings(data, table):
     table_done = True
     c_table = ''
@@ -93,7 +97,7 @@ def RequestingChart(data, pc = False):
     deldata = []
     for i in range(0, len(data)):
         r = requests.get('https://m.mugzone.net/score/{}'.format(data[i]['id']), headers=headers, params=params)
-        print('ReqChart{}\t-\t{}\t-\t{}'.format(mpname, i, r), end = '\r')
+        dprint('ReqChart{}\t-\t{}\t-\t{}'.format(mpname, i, r), end = '\r')
         if r.ok and r.status_code == 200 and 'code' in r.json():
             if 'data' in r.json():
                 soup = bs4.BeautifulSoup(r.json()['data'].replace('\n', '').replace('\t', '').replace('\"', ''), 'html.parser')
@@ -127,12 +131,12 @@ def RequestingChart(data, pc = False):
                 deldata.append(i)
             time.sleep(1)
         else:
-            print('Failed Requesting Chart: ' + str(r))
+            dprint('Failed Requesting Chart: ' + str(r))
             exit(1)
     if deldata:
         for i in range(0, len(deldata)):
             del data[deldata[i]]
-    print()
+    dprint()
     return data
 
 def RequestingChartList():
@@ -150,25 +154,32 @@ def RequestingChartList():
     for i in range(0, tpages):
         params['page'] = i
         r = requests.get('https://m.mugzone.net/page/chart/filter', headers=headers, params=params)
-        print('ReqChartList\t-\t{}\t-\t{}'.format(i, r), end = '\r')
+        dprint('ReqChartList\t-\t{}\t-\t{}'.format(i, r), end = '\r')
         if r.ok or r.status_code != status_code:
             for j in r.json()['data']['list']:
                 data.append({ 'id' : j['id'] })
             time.sleep(1)
         else:
-            print('Failed Requesting Chart List: ' + str(r))
+            dprint('Failed Requesting Chart List: ' + str(r))
             exit(1)
-    print()
+    dprint()
     return data
 
 class flags:
     request = False
+    debug = False
 
 def main(argv):
     for i in argv:
         if i[0] == '-':
             if i == '-r' or i == '--request':
                 flags.request = True
+            if i == '-d' or i == '--debug':
+                flags.debug = True
+
+    print('Doing')
+    time.sleep(1)
+    print('did')
 
     if flags.request:
         t1 = time.time()
@@ -176,10 +187,10 @@ def main(argv):
         controlr.AddingToMySQL(MalodyRankings(RequestingChart(charts), 'malody_mobile_rankings'))
         controlr.AddingToMySQL(MalodyRankings(RequestingChart(charts, True), 'malody_pc_rankings'))
         t2 = time.time()
-        print('Took {} seconds'.format(round(t2 - t1, 2)))
+        dprint('Took {} seconds'.format(round(t2 - t1, 2)))
     
-    if not (flags.request):
-        print('Did nothing.')
+    if not flags.request:
+        dprint('Did nothing.')
         exit(1)
 
 if __name__ == '__main__':

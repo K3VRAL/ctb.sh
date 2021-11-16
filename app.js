@@ -29,3 +29,6 @@ app.use(require('./src/server/routes/error'));
 app.listen(app.get('port'), () => {
     console.log(`Server started at port: ${app.get('port')}`);
 });
+
+// Run python scrips
+require('./src/server/controllers/pythonupdate');
