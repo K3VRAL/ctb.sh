@@ -4,19 +4,18 @@ In this document, you will learn and see how easy it is to be able to get access
 **NOTE: If you intend to learn more about why there are this specific parameters we must take to get said data, I would recommend you look into the [osu!web Documentation](https://osu.ppy.sh/docs/index.html), and even still, you will be using the Documenation a lot to make specific requests so it is still recommended that you use it.**
 
 ## Table of Contents
-**[Getting started](#started)**
+**[Getting started](#getting-started)**
 
-**[New OAuth Application](#oauth)**
+**[New OAuth Application](#new-oauth-application)**
 
-**[Client Credentials Grant](#client)**
+**[Client Credentials Grant](#client-credentials-grant)**
 
-**[Using the Access Token](#token)**
+**[Using the Access Token](#using-the-access-token)**
 
-**[I want me some data](#data)**
+**[I want me some data](#i-want-me-some-data)**
 
 **[FAQs](#faqs)**
 
-<a name='started'></a>
 ## Getting started
 For the sake of simplicity, the program for this guide that will be used is [Insomnia](https://insomnia.rest/). It's a great program to easily make requests to a website.
 
@@ -26,7 +25,6 @@ Open up Insomnia, on the right click on the white circle with the plus sign in t
 
 (If you see in the URL and Send field, to the left, you can also see the GET, POST, etc field where you can change what you want to do. If you intend for consistency, efficiency, or some other, you can have multiple projects open, each with their own requests and accompanying URLs.)
 
-<a name='oauth'></a>
 ## New OAuth Application
 Firstly, before we have any rights to use the api, [we will need to get a 'Client ID' and 'Client Secret'](https://osu.ppy.sh/docs/index.html#registering-an-oauth-application).
 
@@ -38,7 +36,6 @@ Write down what ever name you want on the 'Application Name' field as this does 
 
 You will get a 'Client ID' and 'Client Secret' provided to you. Be absolutely sure you do not give this out to anyone; this has the same value as your password as it can be abused if given to the wrong hands. But let's say someone does know about it and are using it to abuse, you can click on 'Reset client secret' such that the user has no more use to that know secret.
 
-<a name='client'></a>
 ## Client Credentials Grant
 Now that we have the 'Client ID' and 'Client Secret', we are going to request with Insomnia for a [Client Credentials token, this will allow us to gain access to the api](https://osu.ppy.sh/docs/index.html#client-credentials-grant).
 
@@ -64,13 +61,11 @@ Yay, that wasn't so hard :d
 
 **NOTE: It is recommended that you save the this data, more importantly, 'token_type' and 'access_token' as these will be the values to gain access to the data.**
 
-<a name='token'></a>
 ## Using the Access Token
 At this point, it is recommended you make a new project in Insomnia as that will be your (various) workspace(s) to make the requests you so please.
 
 The documentation states that when we are making requests, we need some data in the 'Header' fields. In Insomnia, click on 'Header' and click on 'New header' where the the field should have **Authorization** and the 'value' should have **token_type access_token** or to be more specific **Bearer AccessTokenIsOneVeryLongAssString**.
 
-<a name='data'></a>
 ## I want me some data
 This is the part where I say that it is now mandatory to use the Documentation if you want to make your own requests to gain specific data. I would recommend looking from 'Beatmaps' and below since these will give you necessary information. For now, before you do your own thing, I will give you some examples as a footing before you do your own adventures in the world of osu! api v2.
 
@@ -83,7 +78,6 @@ Let's say I want a list of users from a specific country. Under 'Rankings' in th
 
 In Insomnia, the method will be a **GET**, the URL will be **https://osu.ppy.sh/api/v2/rankings/fruits/performance**, and finally, in the 'Query' section, we add a new name with **country** and the value as **KR** (it is required that the value to be the Country Code).
 
-<a name='faqs'></a>
 ## FAQs
 ### This worked for be before but now everytime I make a **GET** request, it keeps giving me an error. Why's that?
 It may be possible that your token expired; when we request for the access token, we get 3 values, one of them in 'expires_in' where the value is given in seconds. This tells the user how long until the token is usable for until not. It's basically a password that gives rights to get data that also eventually decays. To get around this issue, repeat from **Client Credentials Grant** and below.

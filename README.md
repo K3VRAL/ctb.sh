@@ -5,11 +5,10 @@ I've decided that I will do a redo of the original static website and make a mor
 
 ## Table of Contents
 
-**[Installation](#install)**
+**[Installation](#installation)**
 
-**[Documentation](#doc)**
+**[Documentation](#documentation)**
 
-<a name='install'></a>
 ## Installation
 Make sure you have installed:
 - Node.js
@@ -30,12 +29,8 @@ In that same directory, rename `.env_template.env` to `.env` and include all the
 
 Once done, run `npm start` in the same directory to start the server. There will be a given port number in the console; start your browser, go to `http://localhost:PORT_NUMBER` and you should be able to interact with the website. If instead you'd like to use curl from the terminal, write down in your console/terminal `curl http://localhost:PORT_NUMBER/` and the rest of the URL.
 
-<a name='doc'></a>
 ## Documentation
 Here are some information you may want to use:
-
-### The TODO Section
-- **[TODO](./doc/TODO)**
 
 ### For server implementation
 - **[How the server gathers Malody data](./doc/implement/malody-rankings.md)**

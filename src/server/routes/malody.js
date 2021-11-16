@@ -137,46 +137,29 @@ new Promise((resolve) => {
     });
 
     router.get(`/${mobile_rankings}`, (req, res) => {
-        let query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST(\`first\` AS INT) DESC;`;
-        // if (req.body.length != 0) {
-        //     console.log(req.body);
-        //     query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST('amountplayed' AS INT) DESC;`;
-        // } else {
-        //     query = `SELECT * FROM ${type}_${mobile_rankings}`;
-        // }
-        pool.query(query, (err, result) => {
+        pool.query(`SELECT * FROM ${type}_${mobile_rankings}`, (err, result) => {
             if (err) {
                 throw err;
             }
-
-            pool.query(`DESCRIBE ${type}_${mobile_rankings}`, (err, result2) => {
-                if (err) {
-                    throw err;
-                }
-                new Promise((resolve) => {
-                    resolve(title.format(mobile_rankings));
-                }).then((msg) => {
-                    res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result });
-                });
+            
+            new Promise((resolve) => {
+                resolve(title.format(mobile_rankings));
+            }).then((msg) => {
+                res.render('./pages/malody/rankings', { currpage: msg, datas: result });
             });
         });
     });
 
     router.get(`/${pc_rankings}`, (req, res) => {
-        pool.query(`SELECT * FROM ${type}_${pc_rankings} ORDER BY CAST(\`first\` AS INT) DESC;`, (err, result) => {
+        pool.query(`SELECT * FROM ${type}_${pc_rankings}`, (err, result) => {
             if (err) {
                 throw err;
             }
             
-            pool.query(`DESCRIBE ${type}_${mobile_rankings}`, (err, result2) => {
-                if (err) {
-                    throw err;
-                }
-                new Promise((resolve) => {
-                    resolve(title.format(mobile_rankings));
-                }).then((msg) => {
-                    res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result });
-                });
+            new Promise((resolve) => {
+                resolve(title.format(pc_rankings));
+            }).then((msg) => {
+                res.render('./pages/malody/rankings', { currpage: msg, datas: result });
             });
         });
     });

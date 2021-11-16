@@ -2,21 +2,8 @@
 In this document, you will learn about the various methods done in order to gather all the malody!ctb data in case you are not willing to look into the source code (and I will admit, is a bit messy because of the choas of the so called quote and quote, malody api. (Notice how I'm using [quote] than ["]. It's a headache.))
 
 ## Table of Contents
-**[Wait, there's an API????](#wait)**
+**[](#)**
 
-**[The plan](#plan)**
-
-**[It starts simple](#simple)**
-
-**[It starts to suck](#suck)**
-
-**[Fuck this part of the API](#fuck)**
-
-**[The painful part is over](#over)**
-
-**[Conclusion](#conclusion)**
-
-<a name='wait'></a>
 ## Wait, there's an API????
 Well, yes and no;
 
@@ -26,7 +13,6 @@ No because I'm not sure if it was intended to be used publicly, more specificall
 
 I've decided to go straight for the source and brute-force my way into learning of all the interesting commands and such that they may use to get their website working; and man, if I scratched the surface of the API, I don't want to delve any deepers because of the stupid shit I had to go through to make the data competant and workable; either that or I did something wrong with the API to get those annoying results and I'm just sleep deprived/angry because of the amount of hours gone trying to find an alternate solution to get the same data, to which when that didn't work, I decided to work with what I am given and try to extract the data from the HTML white noise FROM THE API?!?!?!?!?!? (more on that later.)
 
-<a name='plan'></a>
 ## The plan
 Before anyone can start any extraction, you will need a plan of how you'd want your code to work where it can run regardless of human interference; this way, we won't have to constantly check up on the script to see what went wrong.
 
@@ -34,7 +20,6 @@ The idea, which the [python script](../../src/server/data/scripts/malody.py) sti
 
 Wait a minute, why do this to gather the player's information when we can just directly rip from the user's profile? Well because I couldn't really find an API endpoint that gives the user information so I couldn't work from that. Secondly, even if I gather all the data that was specifically provided by the endpoint, I couldn't be too sure if the data would really be representive of player skill than player experience. Having to go through each one of the stable chart list and ripping through each chart can I make a calculation to determine who has better player skill over others. I would recommend you check the [python script](../../src/server/data/scripts/malody.py) or the todo list if I have completed this yet; I wouldn't consider myself too great on statistics or mathematics.
 
-<a name='simple'></a>
 ## It starts simple
 You're best friend when it comes to web development or extracting information is inspect element; but not the inspector, more specifically it's lesser known but over-powered brother, `Network` (or networks or networking or something of the sort; the one that allows you to see what data is being retrieved and sent). This is basically what allowed me to see what exactly the website is doing when we make a couple of requests. Originally, I was going to go for a HTML fetch, extract and format method, but thankfully, I was granted luck went I caught wind of the API urls.
 
@@ -48,7 +33,6 @@ Finally, the most self explainitory query, `page` gives us the specific page of 
 
 The URL endpoint with its queries has been modified to fit my needs since if you were to find the original query, it would be something like `https://m.mugzone.net/page/chart/filter?status=2&count=11&mode=3&tag=0&creator=&key=&next=1111111111&page=0`, where some queries are pretty self explainitory and allows for even better searching methods; however, queries such as `count`, `key`, and `next` utterly confuse me so I wouldn't really know what they would do, thankfully, they aren't as important to the original intention of the script. The original website page where I found the query was in `https://m.mugzone.net/page/all/chart?type=3`.
 
-<a name='suck'></a>
 ## It starts to suck
 This was the part where I started to tear my hair out of my skull. When I visit a chart's webpage, for example `https://m.mugzone.net/chart/1103`, I checked the Networks tab and thankfully there was an API endpoint. The endpoint looks like `https://m.mugzone.net/score/1103?html=1&from=1&judge=-1` but modified is `https://m.mugzone.net/score/1103?html=1&from=1`.
 
@@ -58,7 +42,6 @@ The `from` query is used to distinguish from Mobile players and PC players, wher
 
 The `html` query is by far the most confusing built part of the API, where `1` formats our data to JSON which we need, but `0` just sends a HTML page with the data? From what I've experienced in other websites and their API's, this is really bizarre since API's are supposed to send you raw JSON data, not a full on designed and formatted HTML page with the data. My theory is that it is a query to just make the development of data easier which in my opinion is pretty lazy. Worse yet, if this is the case, it gives the full reason as to why I despised the return JSON data.
 
-<a name='fuck'></a>
 ## Fuck this part of the API
 When it comes to requesting data from the API, you would usually get information like this:
 
@@ -82,13 +65,11 @@ If you are still confused, there are standards for a JSON object to allow for qu
 
 One tool I found called BeautifulSoup in python allowed me to get rid of the HTML tags and extract the necessary data such as text or classes. It was a tedious process but I managed to overcome it. Another annoying thing is the amount of `\n`, `\t` and `\"` which was easy to get rid of but annoying and confusing that it was even there to begin with.
 
-<a name='over'></a>
 ## The painful part is over
 Well the title isn't exactly true to be completly honest since debugging annoying stupid issues with the code and formatting data will always be apart of the programming life cycle when it comes to developing code, but I would consider debugging as apart of the lifestyle so I would say that the painful part is indeed over.
 
 Once all the data is extracted, we can now put it on the database for everyone to see. And just like that, the beast known as the Malody API has been overcomed.
 
-<a name='conclusion'></a>
 ## Conclusion
 Wait a minute, did I just read someone bitch and vent about a stupid thing in a very specific part of the API code? Lmao, just git gud son.
 

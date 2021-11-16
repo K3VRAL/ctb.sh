@@ -1,41 +1,15 @@
+<!-- TODO format json -->
 <!DOCTYPE html>
 <html lang='en'>
     <head>
         <%- include('../../../partials/head'); %>
         <link rel="stylesheet" type="text/css" href="/css/pages/malody/index.css">
-        <link rel="stylesheet" type="text/css" href="/css/pages/malody/rankings.css">
     </head>
     <body>
         <%- include('../../../partials/navigation'); %>
         <h1 id="title"><%= currpage %></h1>
-        <!-- TODO Remove below -->
-        <p>Note: 'maprank' and 'mods' are incomplete. COMING SOON :0</p>
-        <table border='2'>
-            <thead>
-                <% for (let key in keys) { %>
-                    <% if (keys[key].Field != 'link') { %>
-                        <th><%= keys[key].Field %></th>
-                    <% } %>
-                <% } %>
-            </thead>
-            <tbody>
-                <% for (let data in datas) { %>
-                    <tr>
-                    <% for (let k = 0; k < keys.length; k++) { %>
-                        <% if (keys[k].Field == 'name') { %>
-                            <td><a href='https://m.mugzone.net/accounts/user/<%= datas[data][keys[k+1].Field] %>'><%= datas[data][keys[k].Field] %></a></td>
-                        <% } else if (keys[k].Field == 'maprank' || keys[k].Field == 'mods') { %>
-                            <!-- TODO remove this part of the block when finished -->
-                            <td></td>
-                        <% } else if (keys[k].Field == 'score' || keys[k].Field == 'combo' || keys[k].Field == 'amountplayed') { %>
-                            <td><%= datas[data][keys[k].Field].replace(/\B(?=(\d{3})+(?!\d))/g, ','); %></td>
-                        <% } else if (keys[k].Field != 'link') { %>
-                            <td><%= datas[data][keys[k].Field] %></td>
-                        <% } %>
-                    <% } %>
-                    </tr>
-                <% } %>
-            </tbody>
-        </table>
+        <% for (let data in datas) { %>
+            <p><%= JSON.stringify(datas[data]) %></p>
+        <% } %>
     </body>
 </html>
