@@ -1,25 +1,39 @@
 table {
     margin: 0 auto;
     padding: 0;
-    color: #8775b8;
+    color: rgb(142, 125, 188);
     font-size: 20px;
-    border: 1px solid black;
 }
 
 tr {
-    background-color: #8775b8;
+    background-color: rgb(72, 58, 112);
     border-top: 1em solid transparent;
 }
 
-td, th {
-    color: black;
+td, th, form {
+    font-size: 1vw;
+    color: rgb(216, 212, 207);
     border: none;
     text-align: center;
+}
+
+td a {
+    color: rgb(152, 121, 255);
+}
+
+form {
+    font-size: 15px;
+}
+
+form select, form input {
+    border-color: #736b5e;
+    color: #e8e6e3;
+    background-color: #181a1b;
 }
 
 /* TODO Remove below */
 p {
     margin: 0;
     text-align: center;
-    color: black;
+    color: rgb(232, 230, 227);
 }

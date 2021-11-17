@@ -31,4 +31,4 @@ app.listen(app.get('port'), () => {
 });
 
 // Run python scrips
-require('./src/server/controllers/pythonupdate');
+// require('./src/server/controllers/pythonupdate');

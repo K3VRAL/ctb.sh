@@ -139,11 +139,42 @@ new Promise((resolve) => {
     router.get(`/${mobile_rankings}`, (req, res) => {
         let query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST(\`first\` AS INT) DESC;`;
         // if (req.body.length != 0) {
-        //     console.log(req.body);
         //     query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST('amountplayed' AS INT) DESC;`;
         // } else {
         //     query = `SELECT * FROM ${type}_${mobile_rankings}`;
         // }
+        pool.query(query, (err, result) => {
+            if (err) {
+                throw err;
+            }
+
+            pool.query(`DESCRIBE ${type}_${mobile_rankings}`, (err, result2) => {
+                if (err) {
+                    throw err;
+                }
+                new Promise((resolve) => {
+                    resolve(title.format(mobile_rankings));
+                }).then((msg) => {
+                    res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result });
+                });
+            });
+        });
+    });
+    router.post(`/${mobile_rankings}`, (req, res) => {
+        let query;
+        if (req.body['method'] == 'sort') {
+            query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST(\`${req.body['method']}\` AS INT) DESC;`
+            if (req.body['method'] == 'acc') {
+                query = query.slice(0, query.length - 1) + `, CAST(\`${req.body['more']}\` AS INT) DESC;`;
+            }
+        } else if (req.body['method'] == 'search') {
+            if (req.body['search'] != 0) {
+                query = `SELECT * FROM ${type}_${mobile_rankings} WHERE name = \'${req.body['search']}\'`;
+            } else {
+                query = `SELECT * FROM ${type}_${mobile_rankings}`;
+            }
+        }
+        
         pool.query(query, (err, result) => {
             if (err) {
                 throw err;

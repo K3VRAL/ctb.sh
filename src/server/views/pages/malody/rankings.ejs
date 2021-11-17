@@ -6,10 +6,44 @@
         <link rel="stylesheet" type="text/css" href="/css/pages/malody/rankings.css">
     </head>
     <body>
+        <script>
+            let addMoreAcc = ((e) => {
+                let x = document.getElementsByClassName('moremethod');
+                for (let i = 0; i < x.length; i++) {
+                    x[i].style.display = e.target.value == 'acc' ? 'inline' : 'none';
+                }
+            });
+        </script>
         <%- include('../../../partials/navigation'); %>
         <h1 id="title"><%= currpage %></h1>
         <!-- TODO Remove below -->
         <p>Note: 'maprank' and 'mods' are incomplete. COMING SOON :0</p>
+        <form action='#' method='POST'>
+            <input id='fmethod' type='hidden' name='method' value='sort'>
+            <label for='forder' id='fpstyle'>Order by</label>
+            <select if='forder' name='order' onchange='addMoreAcc(event);'>
+                <% for (let key in keys) { %>
+                    <% if (keys[key].Field != 'link') { %>
+                        <option value='<%= keys[key].Field %>'><%= keys[key].Field %></option>
+                    <% } %>
+                <% } %>
+            </select>
+            <label for='fmore' id='fpstyle' class='moreorder' style='display: none;'>Order Acc by</label>
+            <select if='fmore' name='more' class='moreorder' style='display: none;'>
+                <% for (let key in keys) { %>
+                    <% if (keys[key].Field != 'link' && keys[key].Field != 'acc') { %>
+                        <option value='<%= keys[key].Field %>'><%= keys[key].Field %></option>
+                    <% } %>
+                <% } %>
+            </select>
+            <input type='submit' value='Submit Data'>
+        </form>
+        <form action='#' method='POST'>
+            <input id='fmethod' type='hidden' name='method' value='search'>
+            <label for='fsearch' id='fpstyle'>Search User</label>
+            <input if='fsearch' name='search' type='text'>
+            <input type='submit' value='Search'>
+        </form>
         <table border='2'>
             <thead>
                 <% for (let key in keys) { %>
