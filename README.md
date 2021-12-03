@@ -34,9 +34,6 @@ Once done, run `npm start` in the same directory to start the server. There will
 ## Documentation
 Here are some information you may want to use:
 
-### The TODO Section
-- **[TODO](./doc/TODO)**
-
 ### For server implementation
 - **[How the server gathers Malody data](./doc/implement/malody-rankings.md)**
 
