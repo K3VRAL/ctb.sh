@@ -9,7 +9,7 @@ dotenv_path = Path(os.path.dirname(__file__) + '/../../../.env')
 load_dotenv(dotenv_path=dotenv_path)
 
 def AddingToEnviroment(data):
-    with open('.env', 'r') as input, open('.env.output.temp', 'w') as output:
+    with open('.env', 'r') as input, open('.env.temp', 'w') as output:
         for line in input.readlines():
             if not line.strip() or not re.compile('#').search(line) == None:
                 output.write(line)
@@ -23,7 +23,7 @@ def AddingToEnviroment(data):
         for item in data:
             output.write('\n' + 'OAPI_' + item.upper() + '=' + str(data[item]))
     os.remove('.env')
-    os.rename(r'.env.output.temp', r'.env')
+    os.rename(r'.env.temp', r'.env')
 
 def AddingToMySQL(sqldata):
     d_sql = 'DROP TABLE IF EXISTS {};'.format(sqldata['table'])
@@ -56,5 +56,3 @@ def AddingToMySQL(sqldata):
     cur.close()
 
     db.close()
-
-    subprocess.check_call('npm run reload', shell = True)

@@ -30,5 +30,7 @@ app.listen(app.get('port'), () => {
     console.log(`Server started at port: ${app.get('port')}`);
 });
 
-// Run python scrips
-// require('./src/server/controllers/pythonupdate');
+// Run python scripts
+let py = require('./src/server/controllers/pythonupdate');
+py.osupy();
+py.malodypy();

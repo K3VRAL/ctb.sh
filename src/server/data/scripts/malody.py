@@ -9,17 +9,17 @@ import time
 import bs4
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import controlr
 
 def dprint(prnt, end = ''):
     if flags.debug:
         print(prnt, end)
 
-def MalodyRankings(data, table):
-    table_done = True
-    c_table = ''
+def MalodyRankings(json_table, data, table):
     i_table = ''
     i_data = []
+    if json_table:
+        table_done = True
+        c_table = ''
 
     players = []
     for x in range(0, len(data)):
@@ -53,10 +53,10 @@ def MalodyRankings(data, table):
                 else:
                     players[len(players)-1]['first'] = '0'
                 players[len(players)-1]['amountplayed'] = '1'
-        if table_done:
+        if json_table and table_done:
             keys = list(players[0].keys())
             for z in range(0, len(keys)):
-                if (keys[z] == 'mod'): # Apparently mysql can't have 'mod' as a name, that's stupid lol
+                if (keys[z] == 'mod'): # Apparently mysql can't have 'mod' as a name
                     c_table += 'mods TEXT, '
                     i_table += 'mods, '
                 else:
@@ -75,8 +75,9 @@ def MalodyRankings(data, table):
 
     sqldata = {}
     sqldata['table'] = table
-    sqldata['c_table'] = c_table
-    sqldata['i_table'] = i_table
+    if json_table:
+        sqldata['c_table'] = c_table
+        sqldata['i_table'] = i_table
     sqldata['i_data'] = i_data
     return sqldata
 
@@ -94,9 +95,8 @@ def RequestingChart(data, pc = False):
     if pc:
         params['from'] = 0
         mpname = 'PC'
-    deldata = []
     for i in range(0, len(data)):
-        r = requests.get('https://m.mugzone.net/score/{}'.format(data[i]['id']), headers=headers, params=params)
+        r = requests.get('https://m.mugzone.net/score/{}'.format(data[i]['id']), headers = headers, params = params)
         dprint('ReqChart{}\t-\t{}\t-\t{}'.format(mpname, i, r), end = '\r')
         if r.ok and r.status_code == 200 and 'code' in r.json():
             if 'data' in r.json():
@@ -127,16 +127,9 @@ def RequestingChart(data, pc = False):
                     store['mod'] = smod
                     store['title'] = j.attrs['class'][0].split('=')[1]
                     data[i]['data'].append(store)
-            else:
-                deldata.append(i)
-            time.sleep(1)
         else:
             dprint('Failed Requesting Chart: ' + str(r))
             exit(1)
-    if deldata:
-        for i in range(0, len(deldata)):
-            del data[deldata[i]]
-    dprint()
     return data
 
 def RequestingChartList():
@@ -149,25 +142,24 @@ def RequestingChartList():
         'mode'          : 3,
         'page'          : 0
     }
-    tpages = requests.get('https://m.mugzone.net/page/chart/filter', headers=headers, params=params).json()['data']['total']
+    tpages = requests.get('https://m.mugzone.net/page/chart/filter', headers = headers, params = params).json()['data']['total']
     data = []
     for i in range(0, tpages):
         params['page'] = i
-        r = requests.get('https://m.mugzone.net/page/chart/filter', headers=headers, params=params)
+        r = requests.get('https://m.mugzone.net/page/chart/filter', headers = headers, params = params)
         dprint('ReqChartList\t-\t{}\t-\t{}'.format(i, r), end = '\r')
         if r.ok or r.status_code != status_code:
             for j in r.json()['data']['list']:
                 data.append({ 'id' : j['id'] })
-            time.sleep(1)
         else:
             dprint('Failed Requesting Chart List: ' + str(r))
             exit(1)
-    dprint()
     return data
 
 class flags:
     request = False
     debug = False
+    ignore = False
 
 def main(argv):
     for i in argv:
@@ -176,22 +168,25 @@ def main(argv):
                 flags.request = True
             if i == '-d' or i == '--debug':
                 flags.debug = True
-
-    print('Doing')
-    time.sleep(1)
-    print('did')
+            if i == '-i' or i == '--ignore':
+                flags.ignore = True
 
     if flags.request:
         t1 = time.time()
         charts = RequestingChartList()
-        controlr.AddingToMySQL(MalodyRankings(RequestingChart(charts), 'malody_mobile_rankings'))
-        controlr.AddingToMySQL(MalodyRankings(RequestingChart(charts, True), 'malody_pc_rankings'))
+        dataMobile = MalodyRankings(not flags.ignore, RequestingChart(charts), 'malody_mobile_rankings')
+        dataPC = MalodyRankings(not flags.ignore, RequestingChart(charts, True), 'malody_pc_rankings')
         t2 = time.time()
+        dprint(dataMobile)
+        dprint(dataPC)
         dprint('Took {} seconds'.format(round(t2 - t1, 2)))
+        if not flags.ignore:
+            import controlr
+            controlr.AddingToMySQL(dataMobile)
+            controlr.AddingToMySQL(dataPC)
     
     if not flags.request:
-        dprint('Did nothing.')
-        exit(1)
+        print('Did nothing.')
 
 if __name__ == '__main__':
     main(sys.argv[1:])

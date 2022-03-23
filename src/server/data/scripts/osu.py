@@ -5,7 +5,6 @@ import sys
 import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import controlr
 
 def dprint(prnt, end = ''):
     if flags.debug:
@@ -17,7 +16,7 @@ def OsuRankings(data, table):
     i_table = ''
     i_data = []
 
-    for x in range(0, len(data)):
+    for x in range(0, 2):#len(data)):
         keys = list(data[x].keys())
         i_data.append(('',))
         for y in range(0, len(data[x])):
@@ -53,9 +52,9 @@ def RequestingProfile(data):
         'Authorization' : os.getenv('OAPI_TOKEN_TYPE') + ' ' + os.getenv('OAPI_ACCESS_TOKEN')
     }
     for i in range(0, len(data)):
-        r = requests.get('https://osu.ppy.sh/api/v2/users/{}/fruits'.format(data[i]['user']['id']), headers=headers)
+        r = requests.get('https://osu.ppy.sh/api/v2/users/{}/fruits'.format(data[i]['user']['id']), headers = headers)
         dprint('ReqProfile\t-\t{}\t-\t{}'.format(i, r), end = '\r')
-        if r.ok or r.status_code != status_code:
+        if r.ok:
             del data[i]['is_ranked'], data[i]['user']['avatar_url'], data[i]['user']['country_code'], data[i]['user']['is_active'], data[i]['user']['is_bot'], data[i]['user']['is_deleted'], data[i]['user']['is_online'], data[i]['user']['is_supporter'], data[i]['user']['last_visit'], data[i]['user']['pm_friends_only'], data[i]['user']['profile_colour'], data[i]['user']['cover'], data[i]['user']['country']
             data[i]['scores_first_count'] = r.json()['scores_first_count']
             data[i]['follower_count'] = r.json()['follower_count']
@@ -71,7 +70,6 @@ def RequestingProfile(data):
         else:
             dprint('Failed Requesting Profile: ' + str(r))
             exit(1)
-    dprint()
     return data
 
 def RequestingPage():
@@ -86,7 +84,7 @@ def RequestingPage():
             'filter'        : 'all',
             'cursor[page]'  : i
         }
-        r = requests.get('https://osu.ppy.sh/api/v2/rankings/fruits/performance', headers=headers, params=params)
+        r = requests.get('https://osu.ppy.sh/api/v2/rankings/fruits/performance', headers = headers, params = params)
         dprint('ReqPage\t-\t{}\t-\t{}'.format(i, r), end = '\r')
         if r.ok or r.status_code == 200:
             data.extend(r.json()['ranking'])
@@ -95,7 +93,6 @@ def RequestingPage():
             dprint('Failed Requesting Data: ' + str(r))
             dprint('This may have to do with the access token being expired. First try running the same script but with argument \'-c\' to renew.')
             exit(1)
-    dprint()
     return data
 
 def Auth_OAuthToken(code):
@@ -110,7 +107,7 @@ def Auth_OAuthToken(code):
         'grant_type'    : 'authorization_code',
         'redirect_uri'  : os.getenv('OAPI_CLIENT_REDIRECT')
     }
-    r = requests.post('https://osu.ppy.sh/oauth/token', headers=headers, data=json.dumps(bodyparams, separators=(',', ':')))
+    r = requests.post('https://osu.ppy.sh/oauth/token', headers = headers, data = json.dumps(bodyparams, separators = (',', ':')))
     if r.ok:
         dprint(r.json())
     else:
@@ -128,7 +125,7 @@ def Client_OAuthToken():
         'grant_type'    : 'client_credentials',
         'scope'         : 'public'
     }
-    r = requests.post('https://osu.ppy.sh/oauth/token', headers=headers, data=json.dumps(bodyparams, separators=(',', ':')))
+    r = requests.post('https://osu.ppy.sh/oauth/token', headers = headers, data = json.dumps(bodyparams, separators = (',', ':')))
     if r.ok:
         return r.json()
     else:
@@ -140,32 +137,43 @@ class flags:
     clientToken = False
     authToken = False
     debug = False
+    ignore = False
 
 def main(argv):
     for i in argv:
         if i[0] == '-':
-            if i == '-r' or i == '--request':
-                flags.request = True
             if i == '-c' or i == '--client':
                 flags.clientToken = True
+            if i == '-r' or i == '--request':
+                flags.request = True
             if i == '-a' or i == '--auth':
                 flags.authToken = True
             if i == '-d' or i == '--debug':
                 flags.debug = True
+            if i == '-i' or i == '--ignore':
+                flags.ignore = True
+
+    if not flags.ignore:
+        import controlr
 
     if flags.clientToken:
-        controlr.AddingToEnviroment(Client_OAuthToken())
+        data = Client_OAuthToken()
+        dprint(data)
+        if not flags.ignore:
+            controlr.AddingToEnviroment(data)
     if flags.request:
         t1 = time.time()
-        controlr.AddingToMySQL(OsuRankings(RequestingProfile(RequestingPage()), 'osu_rankings'))
+        data = OsuRankings(RequestingProfile(RequestingPage()), 'osu_rankings')
         t2 = time.time()
+        dprint(data)
         dprint('Took {} seconds'.format(round(t2 - t1, 2)))
+        if not flags.ignore:
+            controlr.AddingToMySQL(data)
     if flags.authToken:
-        Auth_OAuthToken(argv[1]) # TODO
+        Auth_OAuthToken(argv[1]) # TODO Maybe use this if including a login method?
 
     if not (flags.clientToken or flags.request or flags.authToken):
-        dprint('Did nothing.')
-        exit(1)
+        print('Did nothing.')
 
 if __name__ == '__main__':
     main(sys.argv[1:])
