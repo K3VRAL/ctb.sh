@@ -137,13 +137,7 @@ new Promise((resolve) => {
     });
 
     router.get(`/${mobile_rankings}`, (req, res) => {
-        let query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST(\`first\` AS INT) DESC;`;
-        // if (req.body.length != 0) {
-        //     query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST('amountplayed' AS INT) DESC;`;
-        // } else {
-        //     query = `SELECT * FROM ${type}_${mobile_rankings}`;
-        // }
-        pool.query(query, (err, result) => {
+        pool.query(`SELECT * FROM ${type}_${mobile_rankings}`, (err, result) => {
             if (err) {
                 throw err;
             }
@@ -161,12 +155,10 @@ new Promise((resolve) => {
         });
     });
     router.post(`/${mobile_rankings}`, (req, res) => {
+        console.log(req.body);
         let query;
         if (req.body['method'] == 'sort') {
-            query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST(\`${req.body['method']}\` AS INT) DESC;`
-            if (req.body['method'] == 'acc') {
-                query = query.slice(0, query.length - 1) + `, CAST(\`${req.body['more']}\` AS INT) DESC;`;
-            }
+            query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST(\`${req.body['order']}\` AS INT) DESC;`
         } else if (req.body['method'] == 'search') {
             if (req.body['search'] != 0) {
                 query = `SELECT * FROM ${type}_${mobile_rankings} WHERE name = \'${req.body['search']}\'`;

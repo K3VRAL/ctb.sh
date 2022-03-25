@@ -1,0 +1,39 @@
+table {
+    margin: 0 auto;
+    padding: 0;
+    color: rgb(36, 36, 36);
+    font-size: 20px;
+}
+
+tr {
+    background-color: rgb(56, 56, 56);
+    border-top: 1em solid transparent;
+}
+
+td, th, form {
+    font-size: 1vw;
+    color: rgb(216, 212, 207);
+    border: none;
+    text-align: center;
+}
+
+td a {
+    color: rgb(57, 41, 107);
+}
+
+form {
+    font-size: 15px;
+}
+
+form select, form input {
+    border-color: #736b5e;
+    color: #e8e6e3;
+    background-color: #181a1b;
+}
+
+/* TODO Remove below */
+p {
+    margin: 0;
+    text-align: center;
+    color: rgb(232, 230, 227);
+}

@@ -142,11 +142,46 @@ new Promise((resolve) => {
             if (err) {
                 throw err;
             }
+
+            pool.query(`DESCRIBE ${type}_${rankings}`, (err, result2) => {
+                if (err) {
+                    throw err;
+                }
+
+                new Promise((resolve) => {
+                    resolve(title.format(rankings));
+                }).then((msg) => {
+                    res.render('./pages/osu/rankings', { currpage: msg, keys: result2, datas: result });
+                });
+            });
+        });
+        router.post(`/${rankings}`, (req, res) => {
+            let query;
+            if (req.body['method'] == 'sort') {
+                query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`${req.body['order']}\` AS INT) DESC;`
+            } else if (req.body['method'] == 'search') {
+                if (req.body['search'] != 0) {
+                    query = `SELECT * FROM ${type}_${rankings} WHERE name = \'${req.body['search']}\'`;
+                } else {
+                    query = `SELECT * FROM ${type}_${rankings}`;
+                }
+            }
             
-            new Promise((resolve) => {
-                resolve(title.format(rankings));
-            }).then((msg) => {
-                res.render('./pages/osu/rankings', { currpage: msg, datas: result });
+            pool.query(query, (err, result) => {
+                if (err) {
+                    throw err;
+                }
+    
+                pool.query(`DESCRIBE ${type}_${rankings}`, (err, result2) => {
+                    if (err) {
+                        throw err;
+                    }
+                    new Promise((resolve) => {
+                        resolve(title.format(rankings));
+                    }).then((msg) => {
+                        res.render('./pages/osu/rankings', { currpage: msg, keys: result2, datas: result });
+                    });
+                });
             });
         });
     });
