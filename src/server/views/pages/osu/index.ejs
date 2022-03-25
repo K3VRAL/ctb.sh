@@ -6,10 +6,10 @@
     </head>
     <body>
         <%- include('../../../partials/navigation'); %>
+        <h1 id="title"><%= currpage %></h1>
         <% if (addata) { %>
             <%- include('../../../partials/addata'); %>
         <% } %>
-        <h1 id="title"><%= currpage %></h1>
         <div class="tiles">
             <% for (let page in pages) { %>
                 <a class="tile" href='<%= pages[page].link %>'><%= pages[page].name %></a>
