@@ -16,7 +16,7 @@ def OsuRankings(data, table):
     i_table = ''
     i_data = []
 
-    for x in range(0, 2):#len(data)):
+    for x in range(0, len(data)):
         keys = list(data[x].keys())
         i_data.append(('',))
         for y in range(0, len(data[x])):
