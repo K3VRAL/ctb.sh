@@ -161,7 +161,7 @@ new Promise((resolve) => {
                 query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`${req.body['order']}\` AS INT) DESC;`
             } else if (req.body['method'] == 'search') {
                 if (req.body['search'] != 0) {
-                    query = `SELECT * FROM ${type}_${rankings} WHERE name = \'${req.body['search']}\'`;
+                    query = `SELECT * FROM ${type}_${rankings} WHERE user_username = \'${req.body['search']}\'`;
                 } else {
                     query = `SELECT * FROM ${type}_${rankings}`;
                 }
