@@ -191,12 +191,42 @@ new Promise((resolve) => {
                 throw err;
             }
             
-            pool.query(`DESCRIBE ${type}_${mobile_rankings}`, (err, result2) => {
+            pool.query(`DESCRIBE ${type}_${pc_rankings}`, (err, result2) => {
                 if (err) {
                     throw err;
                 }
                 new Promise((resolve) => {
-                    resolve(title.format(mobile_rankings));
+                    resolve(title.format(pc_rankings));
+                }).then((msg) => {
+                    res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result });
+                });
+            });
+        });
+    });
+    router.post(`/${pc_rankings}`, (req, res) => {
+        console.log(req.body);
+        let query;
+        if (req.body['method'] == 'sort') {
+            query = `SELECT * FROM ${type}_${pc_rankings} ORDER BY CAST(\`${req.body['order']}\` AS INT) DESC;`
+        } else if (req.body['method'] == 'search') {
+            if (req.body['search'] != 0) {
+                query = `SELECT * FROM ${type}_${pc_rankings} WHERE name = \'${req.body['search']}\'`;
+            } else {
+                query = `SELECT * FROM ${type}_${pc_rankings}`;
+            }
+        }
+        
+        pool.query(query, (err, result) => {
+            if (err) {
+                throw err;
+            }
+
+            pool.query(`DESCRIBE ${type}_${pc_rankings}`, (err, result2) => {
+                if (err) {
+                    throw err;
+                }
+                new Promise((resolve) => {
+                    resolve(title.format(pc_rankings));
                 }).then((msg) => {
                     res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result });
                 });
