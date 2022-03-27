@@ -74,6 +74,7 @@
                 request.onreadystatechange = (() => {
                         if (request.readyState == 4 && request.status == 200) {
                             reqresponse = JSON.parse(request.responseText)["datas"];
+                            console.log(reqresponse.length);
                             if (reqresponse.length != 0) {
                                 let addedHtml = "";
                                 for (let reqres in reqresponse) {

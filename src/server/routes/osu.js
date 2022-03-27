@@ -138,7 +138,7 @@ new Promise((resolve) => {
     });
 
     router.get(`/${rankings}`, (req, res) => {
-        let query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`global_rank\` AS INT) DESC;`;
+        let query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`global_rank\` AS INT) ASC LIMIT 0, 50;`;
         pool.query(query, (err, result) => {
             if (err) {
                 throw err;
@@ -158,15 +158,14 @@ new Promise((resolve) => {
         });
     });
     router.post(`/${rankings}`, (req, res) => {
-        let query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`global_rank\` AS INT) DESC;`;
+        let query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`global_rank\` AS INT) ASC LIMIT 0, 50;`;
         if (req.body['method'] == 'sort') {
-            query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\'${req.body['order']}\' AS INT) DESC LIMIT 0, 50;`;
+            query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\'${req.body['order']}\' AS INT) ASC LIMIT 0, 50;`;
         } else if (req.body['method'] == 'search' && req.body['search'] != 0) {
             query = `SELECT * FROM ${type}_${rankings} WHERE name = \'${req.body['search']}\';`;
         } else if (req.body["method"] == "more") {
-            let limit = req.body['page'] * 50;
-            let offset = (req.body['page'] + 1) * 50;
-            query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\'${req.body['order']}\' AS INT) DESC LIMIT ${limit}, ${offset};`;
+            let offset = (Number(req.body['page']) + 1) * 50;
+            query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\'${req.body['order']}\' AS INT) ASC LIMIT ${offset}, 50;`;
         }
 
         pool.query(query, (err, result) => {

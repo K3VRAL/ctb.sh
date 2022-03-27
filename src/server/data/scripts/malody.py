@@ -22,46 +22,46 @@ def MalodyRankings(json_table, data, table):
         c_table = ''
 
     players = []
-    for x in range(0, len(data)):
-        for y in range(0, len(data[x]['data'])):
-            found = False
-            i = -1
-            for z in range(0, len(players)): 
-                if players and data[x]['data'][y]['name'] == players[z]['name']:
-                    found = True
-                    i = z
-                    break
-            if found:
-                if data[x]['data'][y]['maprank'] == '1':
-                    players[i]['first'] = str(int(data[x]['data'][y]['maprank']) + int(players[i]['first']))
-                players[i]['maprank'] = str(int(data[x]['data'][y]['maprank']) + int(players[i]['maprank']))
-                players[i]['score'] = str(int(data[x]['data'][y]['score']) + int(players[i]['score']))
-                players[i]['combo'] = str(int(data[x]['data'][y]['combo']) + int(players[i]['combo']))
-                players[i]['acc'] = '{}%'.format(round((float(data[x]['data'][y]['acc'].strip('%')) + float(players[i]['acc'].strip('%'))) / 2, 2))
-                # players[i]['mods'] += data[x]['data'][y]['mods'] # TODO mod usage and count
-                tdata = data[x]['data'][y]['title'].split('/')
-                tplyr = players[i]['title'].split('/')
-                players[i]['title'] = '{}/{}/{}/{}'.format(int(tdata[0]) + int(tplyr[0]), int(tdata[1]) + int(tplyr[1]), int(tdata[2]) + int(tplyr[2]), int(tdata[3]) + int(tplyr[3]))
-                players[i]['amountplayed'] = str(int(players[i]['amountplayed']) + 1)
-            else:
-                keys = list(data[x]['data'][y].keys())
-                players.append({})
-                for z in range(0, len(keys)):
-                    players[len(players)-1][keys[z]] = data[x]['data'][y][keys[z]]
-                if data[x]['data'][y]['maprank'] == '1':
-                    players[len(players)-1]['first'] = '1'
+    for x in data:
+        if "data" in x:
+            for y in x['data']:
+                found = False
+                i = -1
+                for z in range(0, len(players)): 
+                    if players and y['name'] == players[z]['name']:
+                        found = True
+                        i = z
+                        break
+                if found:
+                    if y['maprank'] == '1':
+                        players[i]['first'] = str(int(y['maprank']) + int(players[i]['first']))
+                    players[i]['maprank'] = str(int(y['maprank']) + int(players[i]['maprank']))
+                    players[i]['score'] = str(int(y['score']) + int(players[i]['score']))
+                    players[i]['combo'] = str(int(y['combo']) + int(players[i]['combo']))
+                    players[i]['acc'] = '{}%'.format(round((float(y['acc'].strip('%')) + float(players[i]['acc'].strip('%'))) / 2, 2))
+                    # players[i]['mods'] += y['mods'] # TODO mod usage and count
+                    tdata = y['title'].split('/')
+                    tplyr = players[i]['title'].split('/')
+                    players[i]['title'] = '{}/{}/{}/{}'.format(int(tdata[0]) + int(tplyr[0]), int(tdata[1]) + int(tplyr[1]), int(tdata[2]) + int(tplyr[2]), int(tdata[3]) + int(tplyr[3]))
+                    players[i]['amountplayed'] = str(int(players[i]['amountplayed']) + 1)
                 else:
-                    players[len(players)-1]['first'] = '0'
-                players[len(players)-1]['amountplayed'] = '1'
+                    keys = list(y.keys())
+                    players.append({})
+                    for z in keys:
+                        players[len(players)-1][z] = y[z]
+                    if y['maprank'] == '1':
+                        players[len(players)-1]['first'] = '1'
+                    else:
+                        players[len(players)-1]['first'] = '0'
+                    players[len(players)-1]['amountplayed'] = '1'
         if json_table and table_done:
-            keys = list(players[0].keys())
-            for z in range(0, len(keys)):
-                if (keys[z] == 'mod'): # Apparently mysql can't have 'mod' as a name
+            for z in list(players[0].keys()):
+                if (z == 'mod'): # Apparently mysql can't have 'mod' as a name
                     c_table += 'mods TEXT, '
                     i_table += 'mods, '
                 else:
-                    c_table += '{} TEXT, '.format(keys[z])
-                    i_table += '{}, '.format(keys[z])
+                    c_table += '{} TEXT, '.format(z)
+                    i_table += '{}, '.format(z)
             c_table = c_table[:len(c_table)-2]
             i_table = i_table[:len(i_table)-2]
             table_done = False
@@ -69,8 +69,8 @@ def MalodyRankings(json_table, data, table):
     for x in range(0, len(players)):
         i_data.append(('',))
         keys = list(players[x].keys())
-        for y in range(0, len(keys)):
-            i_data[x] += ('{}'.format(players[x][keys[y]]),)
+        for y in keys:
+            i_data[x] += ('{}'.format(players[x][y]),)
         i_data[x] = i_data[x][1:]
 
     sqldata = {}
