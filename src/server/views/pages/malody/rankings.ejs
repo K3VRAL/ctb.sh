@@ -21,6 +21,10 @@
                     <% } %>
                 <% } %>
             </select>
+            <select if='fascdesc' name='ascdesc'>
+                <option value="ASC" <% if (ascdesc == "ASC") { %>selected<% } %>>Ascending</option>
+                <option value="DESC" <% if (ascdesc == "DESC") { %>selected<% } %>>Descending</option>
+            </select>
             <input type='submit' value='Submit Data'>
         </form>
         <form action='#' method='POST' class='name'>
@@ -29,8 +33,8 @@
             <input if='fsearch' name='search' type='text'>
             <input type='submit' value='Search'>
         </form>
-        <table border='2' id="tableData">
-            <thead id="tableHead">
+        <table border='2'>
+            <thead>
                 <% for (let key in keys) { %>
                     <% if (keys[key].Field != 'link') { %>
                         <th><%= keys[key].Field %></th>
@@ -74,7 +78,6 @@
                 request.onreadystatechange = (() => {
                         if (request.readyState == 4 && request.status == 200) {
                             reqresponse = JSON.parse(request.responseText)["datas"];
-                            console.log(reqresponse.length);
                             if (reqresponse.length != 0) {
                                 let addedHtml = "";
                                 for (let reqres in reqresponse) {

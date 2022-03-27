@@ -19,6 +19,10 @@
                     <% } %>
                 <% } %>
             </select>
+            <select if='fascdesc' name='ascdesc'>
+                <option value="ASC" <% if (ascdesc == "ASC") { %>selected<% } %>>Ascending</option>
+                <option value="DESC" <% if (ascdesc == "DESC") { %>selected<% } %>>Descending</option>
+            </select>
             <input type='submit' value='Submit Data'>
         </form>
         <form action='#' method='POST' class='name'>
@@ -35,7 +39,7 @@
                     <% } %>
                 <% } %>
             </thead>
-            <tbody>
+            <tbody id="tableBody">
                 <% for (let data in datas) { %>
                     <tr>
                     <% for (let k = 0; k < keys.length; k++) { %>
@@ -65,30 +69,26 @@
 
                 let request = new XMLHttpRequest();
                 request.onreadystatechange = (() => {
-                        if (request.readyState == 4 && request.status == 200) {
-                            reqresponse = JSON.parse(request.responseText)["datas"];
-                            if (reqresponse.length != 0) {
-                                let addedHtml = "";
-                                for (let reqres in reqresponse) {
-                                    addedHtml += "<tr>";
-                                    for (let r in reqresponse[reqres]) {
-                                        if (r == "name") {
-                                            addedHtml += "<td><a href='https://m.mugzone.net/accounts/user/" + reqresponse[reqres][r+1] + "'>" + reqresponse[reqres][r] + "</a></td>";
-                                        } else if (r == "maprank" || r == "mods") {
-                                            addedHtml += "<td></td>";
-                                        } else if (r == 'score' || r == 'combo' || r == 'amountplayed') {
-                                            addedHtml += "<td>" + reqresponse[reqres][r].replace(/\B(?=(\d{3})+(?!\d))/g, ','); + "</td>";
-                                        } else if (r != "link") {
-                                            addedHtml += "<td>" + reqresponse[reqres][r] + "</td>"
-                                        }
+                    if (request.readyState == 4 && request.status == 200) {
+                        reqresponse = JSON.parse(request.responseText)["datas"];
+                        if (reqresponse.length != 0) {
+                            let addedHtml = "";
+                            for (let reqres in reqresponse) {
+                                addedHtml += "<tr>";
+                                for (let r in reqresponse[reqres]) {
+                                    if (r == "user_username") {
+                                        addedHtml += "<td><a href='https://osu.ppy.sh/users/" + reqresponse[reqres][r-1] + "'>" + reqresponse[reqres][r] + "</a></td>";
+                                    } else {
+                                        addedHtml += "<td>" + reqresponse[reqres][r] + "</td>"
                                     }
-                                    addedHtml += "</tr>";
                                 }
-                                document.getElementById("tableBody").innerHTML += addedHtml;
-                            } else {
-                                document.getElementById("moredata").remove();
+                                addedHtml += "</tr>";
                             }
+                            document.getElementById("tableBody").innerHTML += addedHtml;
+                        } else {
+                            document.getElementById("moredata").remove();
                         }
+                    }
                 });
                 request.open("POST", window.location.pathname, true);
                 request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");

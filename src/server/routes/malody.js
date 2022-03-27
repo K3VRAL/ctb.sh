@@ -137,7 +137,7 @@ new Promise((resolve) => {
     });
 
     router.get(`/${mobile_rankings}`, (req, res) => {
-        let query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST(\`first\` AS INT) ASC LIMIT 0, 50;`;
+        let query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY first ASC LIMIT 0, 50;`;
         pool.query(query, (err, result) => {
             if (err) {
                 throw err;
@@ -151,23 +151,23 @@ new Promise((resolve) => {
                 new Promise((resolve) => {
                     resolve(title.format(mobile_rankings));
                 }).then((msg) => {
-                    res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result, order: req.body['order'] });
+                    res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result, order: null, ascdesc: null });
                 });
             });
         });
     });
     router.post(`/${mobile_rankings}`, (req, res) => {
-        let query = `SELECT * FROM ${type}_${mobile_rankings} LIMIT 0, 50`;
+        let ascdesc = req.body['ascdesc'] ? req.body['ascdesc'] : "ASC";
+        let query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY first ${ascdesc} LIMIT 0, 50`;
         if (req.body['method'] == 'sort') {
-            query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST(\'${req.body['order']}\' AS INT) ASC LIMIT 0, 50;`;
+            query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY ${req.body['order']} ${ascdesc} LIMIT 0, 50;`;
         } else if (req.body['method'] == 'search' && req.body['search'] != 0) {
             query = `SELECT * FROM ${type}_${mobile_rankings} WHERE name = \'${req.body['search']}\';`;
         } else if (req.body["method"] == "more") {
             let offset = (Number(req.body['page']) + 1) * 50;
-            query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY CAST(\'${req.body['order']}\' AS INT) ASC LIMIT ${offset}, 50;`;
+            query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY ${req.body['order']} ${ascdesc} LIMIT ${offset}, 50;`;
         }
-        console.log(query);
-        
+
         pool.query(query, (err, result) => {
             if (err) {
                 throw err;
@@ -183,7 +183,7 @@ new Promise((resolve) => {
                     new Promise((resolve) => {
                         resolve(title.format(mobile_rankings));
                     }).then((msg) => {
-                        res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result, order: req.body['order'] });
+                        res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result, order: req.body['order'], ascdesc: req.body['ascdesc'] });
                     });
                 });
             }
@@ -191,7 +191,7 @@ new Promise((resolve) => {
     });
 
     router.get(`/${pc_rankings}`, (req, res) => {
-        pool.query(`SELECT * FROM ${type}_${pc_rankings} ORDER BY CAST(\`first\` AS INT) ASC LIMIT 0, 50;`, (err, result) => {
+        pool.query(`SELECT * FROM ${type}_${pc_rankings} ORDER BY first ASC LIMIT 0, 50;`, (err, result) => {
             if (err) {
                 throw err;
             }
@@ -204,20 +204,21 @@ new Promise((resolve) => {
                 new Promise((resolve) => {
                     resolve(title.format(pc_rankings));
                 }).then((msg) => {
-                    res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result, order: req.body['order'] });
+                    res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result, order: null, ascdesc: null });
                 });
             });
         });
     });
     router.post(`/${pc_rankings}`, (req, res) => {
-        let query = `SELECT * FROM ${type}_${pc_rankings} LIMIT 0, 50;`;
+        let ascdesc = req.body['ascdesc'] ? req.body['ascdesc'] : "ASC";
+        let query = `SELECT * FROM ${type}_${pc_rankings} ORDER BY first ${ascdesc} LIMIT 0, 50;`;
         if (req.body['method'] == 'sort') {
-            query = `SELECT * FROM ${type}_${pc_rankings} ORDER BY CAST(\`${req.body['order']}\` AS INT) ASC LIMIT 0, 50;`
+            query = `SELECT * FROM ${type}_${pc_rankings} ORDER BY ${req.body['order']} ${ascdesc} LIMIT 0, 50;`
         } else if (req.body['method'] == 'search' && req.body['search'] != 0) {
             query = `SELECT * FROM ${type}_${pc_rankings} WHERE name = \'${req.body['search']}\'`;
         } else if (req.body["method"] == "more") {
             let offset = (Number(req.body['page']) + 1) * 50;
-            query = `SELECT * FROM ${type}_${pc_rankings} ORDER BY CAST(\'${req.body['order']}\' AS INT) ASC LIMIT ${offset}, 50;`;
+            query = `SELECT * FROM ${type}_${pc_rankings} ORDER BY ${req.body['order']} ${ascdesc} LIMIT ${offset}, 50;`;
         }
         
         pool.query(query, (err, result) => {
@@ -235,7 +236,7 @@ new Promise((resolve) => {
                     new Promise((resolve) => {
                         resolve(title.format(pc_rankings));
                     }).then((msg) => {
-                        res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result, order: req.body['order'] });
+                        res.render('./pages/malody/rankings', { currpage: msg, keys: result2, datas: result, order: req.body['order'], ascdesc: req.body['ascdesc'] });
                     });
                 });
             }
