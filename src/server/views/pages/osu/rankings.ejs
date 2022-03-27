@@ -15,7 +15,7 @@
             <select if='forder' name='order'>
                 <% for (let key in keys) { %>
                     <% if (keys[key].Field != 'link') { %>
-                        <option value='<%= keys[key].Field %>'><%= keys[key].Field %></option>
+                        <option value='<%= keys[key].Field %>' <% if (order == keys[key].Field) { %>selected<% } %>><%= keys[key].Field %></option>
                     <% } %>
                 <% } %>
             </select>
@@ -49,5 +49,51 @@
                 <% } %>
             </tbody>
         </table>
+        <div id='moredata'><a id='moredatalink' onclick="getMoreData();">Get More</a></div>
+        <script>
+            window.onload = (() => {
+                if (localStorage.getItem("page")) {
+                    localStorage.removeItem("page");
+                }
+            });
+
+            let getMoreData = (() => {
+                if (!localStorage.getItem("page")) {
+                    localStorage.setItem("page", 0);
+                }
+                localStorage.setItem("page", Number(localStorage.getItem("page")) + 1);
+
+                let request = new XMLHttpRequest();
+                request.onreadystatechange = (() => {
+                        if (request.readyState == 4 && request.status == 200) {
+                            reqresponse = JSON.parse(request.responseText)["datas"];
+                            if (reqresponse.length != 0) {
+                                let addedHtml = "";
+                                for (let reqres in reqresponse) {
+                                    addedHtml += "<tr>";
+                                    for (let r in reqresponse[reqres]) {
+                                        if (r == "name") {
+                                            addedHtml += "<td><a href='https://m.mugzone.net/accounts/user/" + reqresponse[reqres][r+1] + "'>" + reqresponse[reqres][r] + "</a></td>";
+                                        } else if (r == "maprank" || r == "mods") {
+                                            addedHtml += "<td></td>";
+                                        } else if (r == 'score' || r == 'combo' || r == 'amountplayed') {
+                                            addedHtml += "<td>" + reqresponse[reqres][r].replace(/\B(?=(\d{3})+(?!\d))/g, ','); + "</td>";
+                                        } else if (r != "link") {
+                                            addedHtml += "<td>" + reqresponse[reqres][r] + "</td>"
+                                        }
+                                    }
+                                    addedHtml += "</tr>";
+                                }
+                                document.getElementById("tableBody").innerHTML += addedHtml;
+                            } else {
+                                document.getElementById("moredata").remove();
+                            }
+                        }
+                });
+                request.open("POST", window.location.pathname, true);
+                request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                request.send("method=more&order=<% if (!order) { %>name<% } else { %><%= order %><% } %>&page=" + localStorage.getItem("page"));
+            });
+        </script>
     </body>
 </html>

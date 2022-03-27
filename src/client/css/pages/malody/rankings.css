@@ -37,3 +37,27 @@ p {
     text-align: center;
     color: rgb(232, 230, 227);
 }
+
+#moredata {
+    margin: 0;
+    padding: 0;
+    color: #222;
+    float: right;
+}
+
+#moredatalink {
+    border: 1px solid white;
+    border-radius: 3px;
+    margin-top: 0;
+    margin-left: 20px;
+    text-decoration: none;
+    transition: 0.2s ease-in-out;
+    color: white;
+}
+
+
+#moredatalink:hover {
+    cursor: pointer;
+    background-color: white;
+    color: black;
+}

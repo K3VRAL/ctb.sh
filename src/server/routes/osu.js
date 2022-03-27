@@ -138,7 +138,8 @@ new Promise((resolve) => {
     });
 
     router.get(`/${rankings}`, (req, res) => {
-        pool.query(`SELECT * FROM ${type}_${rankings}`, (err, result) => {
+        let query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`global_rank\` AS INT) DESC;`;
+        pool.query(query, (err, result) => {
             if (err) {
                 throw err;
             }
@@ -151,27 +152,31 @@ new Promise((resolve) => {
                 new Promise((resolve) => {
                     resolve(title.format(rankings));
                 }).then((msg) => {
-                    res.render('./pages/osu/rankings', { currpage: msg, keys: result2, datas: result });
+                    res.render('./pages/osu/rankings', { currpage: msg, keys: result2, datas: result, order: req.body['order'] });
                 });
             });
         });
-        router.post(`/${rankings}`, (req, res) => {
-            let query;
-            if (req.body['method'] == 'sort') {
-                query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`${req.body['order']}\` AS INT) DESC;`
-            } else if (req.body['method'] == 'search') {
-                if (req.body['search'] != 0) {
-                    query = `SELECT * FROM ${type}_${rankings} WHERE user_username = \'${req.body['search']}\'`;
-                } else {
-                    query = `SELECT * FROM ${type}_${rankings}`;
-                }
+    });
+    router.post(`/${rankings}`, (req, res) => {
+        let query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`global_rank\` AS INT) DESC;`;
+        if (req.body['method'] == 'sort') {
+            query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\'${req.body['order']}\' AS INT) DESC LIMIT 0, 50;`;
+        } else if (req.body['method'] == 'search' && req.body['search'] != 0) {
+            query = `SELECT * FROM ${type}_${rankings} WHERE name = \'${req.body['search']}\';`;
+        } else if (req.body["method"] == "more") {
+            let limit = req.body['page'] * 50;
+            let offset = (req.body['page'] + 1) * 50;
+            query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\'${req.body['order']}\' AS INT) DESC LIMIT ${limit}, ${offset};`;
+        }
+
+        pool.query(query, (err, result) => {
+            if (err) {
+                throw err;
             }
-            
-            pool.query(query, (err, result) => {
-                if (err) {
-                    throw err;
-                }
-    
+
+            if (req.body["method"] == "more") {
+                res.send({ datas: result });
+            } else {
                 pool.query(`DESCRIBE ${type}_${rankings}`, (err, result2) => {
                     if (err) {
                         throw err;
@@ -179,10 +184,10 @@ new Promise((resolve) => {
                     new Promise((resolve) => {
                         resolve(title.format(rankings));
                     }).then((msg) => {
-                        res.render('./pages/osu/rankings', { currpage: msg, keys: result2, datas: result });
+                        res.render('./pages/osu/rankings', { currpage: msg, keys: result2, datas: result, order: req.body['order'] });
                     });
                 });
-            });
+            }
         });
     });
 });
