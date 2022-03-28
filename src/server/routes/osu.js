@@ -158,8 +158,52 @@ new Promise((resolve) => {
         });
     });
     router.post(`/${rankings}`, (req, res) => {
-        let orderby = `ORDER BY ` + (req.body['order'] ? req.body['order'] : "global_rank");
-        let ascdesc = req.body['ascdesc'] == "ASC" ? "ASC" : req.body['ascdesc'] == "DESC" ? "DESC" : "ASC";
+        let orderby = "ORDER BY ";
+        switch (req.body['order']) {
+            case "user_default_group":
+            case "user_username":
+                orderby += req.body['order'];
+                break;
+            case "level_current":
+            case "level_progress":
+            case "global_rank":
+            case "ranked_score":
+            case "play_count":
+            case "play_time":
+            case "total_score":
+            case "total_hits":
+            case "maximum_combo":
+            case "replays_watched_by_others":
+            case "grade_counts_ss":
+            case "grade_counts_ssh":
+            case "grade_counts_s":
+            case "grade_counts_sh":
+            case "grade_counts_a":
+            case "user_id":
+            case "scores_first_count":
+            case "follower_count":
+            case "post_count":
+            case "kudosu_total":
+            case "kudosu_available":
+            case "ranked_beatmapset_count":
+            case "loved_beatmapset_count":
+            case "graveyard_beatmapset_count":
+            case "pending_beatmapset_count":
+            case "mapping_follower_count":
+            case "user_achievements":
+                orderby += `CAST(\`${req.body['order']}\` AS UNSIGNED)`;
+                break;
+            case "pp":
+                orderby += `CAST(\`${req.body['order']}\` AS DECIMAL(9,1))`
+                break;
+            case "hit_accuracy":
+                orderby += `CAST(\`${req.body['order']}\` AS DECIMAL(3,4))`
+                break;
+            default:
+                orderby += "global_rank";
+                break;
+        }
+        let ascdesc = req.body['ascdesc'] == "ASC" ? "ASC" : "DESC";
         let limit = `LIMIT ` + (req.body['page'] ? Number(req.body['page']) * 50 : 0) + `, 50`;
         let query = `SELECT * FROM ${type}_${rankings} ${orderby} ${ascdesc} ${limit};`; // req.body['method'] == 'sort' || req.body["method"] == "more"
         if (req.body['method'] == 'search' && req.body['search'] != 0) {

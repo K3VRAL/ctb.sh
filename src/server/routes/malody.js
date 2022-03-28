@@ -157,16 +157,36 @@ new Promise((resolve) => {
         });
     });
     router.post(`/${mobile_rankings}`, (req, res) => {
-        let ascdesc = req.body['ascdesc'] ? req.body['ascdesc'] : "ASC";
-        let query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY first ${ascdesc} LIMIT 0, 50`;
-        if (req.body['method'] == 'sort') {
-            query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY ${req.body['order']} ${ascdesc} LIMIT 0, 50;`;
-        } else if (req.body['method'] == 'search' && req.body['search'] != 0) {
-            query = `SELECT * FROM ${type}_${mobile_rankings} WHERE name = \'${req.body['search']}\';`;
-        } else if (req.body["method"] == "more") {
-            let offset = (Number(req.body['page']) + 1) * 50;
-            query = `SELECT * FROM ${type}_${mobile_rankings} ORDER BY ${req.body['order']} ${ascdesc} LIMIT ${offset}, 50;`;
+        let orderby = "ORDER BY ";
+        switch (req.body['order']) {
+            case "name":
+                orderby += req.body['order'];
+                break;
+            case "score":
+            case "combo":
+            case "first":
+            case "amountplayed":
+                orderby += `CAST(\`${req.body['order']}\` AS UNSIGNED)`;
+                break;
+            case "acc":
+                orderby += `CAST(\`${req.body['order']}\` AS DECIMAL(3,2))`
+                break;
+            case "title":
+                orderby += `CAST(SUBSTRING_INDEX(${req.body['order']}, '/', 1) AS UNSIGNED)`
+                break;
+            case "maprank": // TODO
+            case "mods":
+            default:
+                orderby += "first";
+                break;
         }
+        let ascdesc = req.body['ascdesc'] == "ASC" ? "ASC" : req.body['ascdesc'] == "DESC" ? "DESC" : "ASC";
+        let limit = `LIMIT ` + (req.body['page'] ? Number(req.body['page']) * 50 : 0) + `, 50`;
+        let query = `SELECT * FROM ${type}_${mobile_rankings} ${orderby} ${ascdesc} ${limit};`; // req.body['method'] == 'sort' || req.body["method"] == "more"
+        if (req.body['method'] == 'search' && req.body['search'] != 0) {
+            query = `SELECT * FROM ${type}_${mobile_rankings} WHERE name = \'${req.body['search']}\';`;
+        }
+        console.log(query);
 
         pool.query(query, (err, result) => {
             if (err) {
@@ -210,15 +230,34 @@ new Promise((resolve) => {
         });
     });
     router.post(`/${pc_rankings}`, (req, res) => {
-        let ascdesc = req.body['ascdesc'] ? req.body['ascdesc'] : "ASC";
-        let query = `SELECT * FROM ${type}_${pc_rankings} ORDER BY first ${ascdesc} LIMIT 0, 50;`;
-        if (req.body['method'] == 'sort') {
-            query = `SELECT * FROM ${type}_${pc_rankings} ORDER BY ${req.body['order']} ${ascdesc} LIMIT 0, 50;`
-        } else if (req.body['method'] == 'search' && req.body['search'] != 0) {
-            query = `SELECT * FROM ${type}_${pc_rankings} WHERE name = \'${req.body['search']}\'`;
-        } else if (req.body["method"] == "more") {
-            let offset = (Number(req.body['page']) + 1) * 50;
-            query = `SELECT * FROM ${type}_${pc_rankings} ORDER BY ${req.body['order']} ${ascdesc} LIMIT ${offset}, 50;`;
+        let orderby = "ORDER BY ";
+        switch (req.body['order']) {
+            case "name":
+                orderby += req.body['order'];
+                break;
+            case "score":
+            case "combo":
+            case "first":
+            case "amountplayed":
+                orderby += `CAST(\`${req.body['order']}\` AS UNSIGNED)`;
+                break;
+            case "acc":
+                orderby += `CAST(\`${req.body['order']}\` AS DECIMAL(3,2))`
+                break;
+            case "title":
+                orderby += `CAST(SUBSTRING_INDEX(${req.body['order']}, '/', 1) AS UNSIGNED)`
+                break;
+            case "maprank": // TODO
+            case "mods":
+            default:
+                orderby += "first";
+                break;
+        }
+        let ascdesc = req.body['ascdesc'] == "ASC" ? "ASC" : req.body['ascdesc'] == "DESC" ? "DESC" : "ASC";
+        let limit = `LIMIT ` + (req.body['page'] ? Number(req.body['page']) * 50 : 0) + `, 50`;
+        let query = `SELECT * FROM ${type}_${pc_rankings} ${orderby} ${ascdesc} ${limit};`; // req.body['method'] == 'sort' || req.body["method"] == "more"
+        if (req.body['method'] == 'search' && req.body['search'] != 0) {
+            query = `SELECT * FROM ${type}_${pc_rankings} WHERE name = \'${req.body['search']}\';`;
         }
         
         pool.query(query, (err, result) => {

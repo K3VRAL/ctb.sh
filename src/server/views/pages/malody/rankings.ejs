@@ -103,7 +103,7 @@
                 });
                 request.open("POST", window.location.pathname, true);
                 request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                request.send("method=more&order=<% if (!order) { %>name<% } else { %><%= order %><% } %>&page=" + localStorage.getItem("page"));
+                request.send("method=more&order=<% if (!order) { %>name<% } else { %><%= order %><% } %>&ascdesc=<% if (!ascdesc) { %>ASC<% } else { %><%= ascdesc %><% } %>&page=" + localStorage.getItem("page"));
             });
         </script>
     </body>
