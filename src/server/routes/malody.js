@@ -181,7 +181,7 @@ router.post(`/${mobile_rankings}`, (req, res) => {
             break;
     }
     let ascdesc = req.body['ascdesc'] == "ASC" ? "ASC" : req.body['ascdesc'] == "DESC" ? "DESC" : "ASC";
-    let limit = `LIMIT ` + (req.body['page'] ? Number(req.body['page']) * 50 : 0) + `, 50`;
+    let limit = `LIMIT ` + (isNum(req.body['page']) ? Number(req.body['page']) * 50 : 0) + `, 50`;
     let query = `SELECT * FROM ${type}_${mobile_rankings} ${orderby} ${ascdesc} ${limit};`; // req.body['method'] == 'sort' || req.body["method"] == "more"
     let extra;
     if (req.body['method'] == 'search' && req.body['search'] != 0) {
@@ -255,7 +255,7 @@ router.post(`/${pc_rankings}`, (req, res) => {
             break;
     }
     let ascdesc = req.body['ascdesc'] == "ASC" ? "ASC" : req.body['ascdesc'] == "DESC" ? "DESC" : "ASC";
-    let limit = `LIMIT ` + (req.body['page'] ? Number(req.body['page']) * 50 : 0) + `, 50`;
+    let limit = `LIMIT ` + (isNum(req.body['page']) ? Number(req.body['page']) * 50 : 0) + `, 50`;
     let query = `SELECT * FROM ${type}_${pc_rankings} ${orderby} ${ascdesc} ${limit};`; // req.body['method'] == 'sort' || req.body["method"] == "more"
     let extra;
     if (req.body['method'] == 'search' && req.body['search'] != 0) {
