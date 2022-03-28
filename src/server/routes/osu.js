@@ -138,7 +138,7 @@ new Promise((resolve) => {
     });
 
     router.get(`/${rankings}`, (req, res) => {
-        let query = `SELECT * FROM ${type}_${rankings} ORDER BY global_rank ASC LIMIT 0, 50;`;
+        let query = `SELECT * FROM ${type}_${rankings} ORDER BY CAST(\`global_rank\` AS UNSIGNED) ASC LIMIT 0, 50;`;
         pool.query(query, (err, result) => {
             if (err) {
                 throw err;
