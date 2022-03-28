@@ -185,7 +185,7 @@ router.post(`/${mobile_rankings}`, (req, res) => {
     let query = `SELECT * FROM ${type}_${mobile_rankings} ${orderby} ${ascdesc} ${limit};`; // req.body['method'] == 'sort' || req.body["method"] == "more"
     let extra;
     if (req.body['method'] == 'search' && req.body['search'] != 0) {
-        query = `SELECT * FROM ${type}_${mobile_rankings} WHERE name = \'${req.body['search']}\';`;
+        query = `SELECT * FROM ${type}_${mobile_rankings} WHERE name = ?;`;
         extra = req.body['search'];
     }
 
