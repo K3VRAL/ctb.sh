@@ -204,7 +204,7 @@ router.post(`/${rankings}`, (req, res) => {
             break;
     }
     let ascdesc = req.body['ascdesc'] == "ASC" ? "ASC" : "DESC";
-    let limit = `LIMIT ` + (!isNan(req.body['page']) ? Number(req.body['page']) * 50 : 0) + `, 50`;
+    let limit = `LIMIT ` + (!isNaN(req.body['page']) ? Number(req.body['page']) * 50 : 0) + `, 50`;
     let query = `SELECT * FROM ${type}_${rankings} ${orderby} ${ascdesc} ${limit};`; // req.body['method'] == 'sort' || req.body["method"] == "more"
     let extra;
     if (req.body['method'] == 'search' && req.body['search'] != 0) {
