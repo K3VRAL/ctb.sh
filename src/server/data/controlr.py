@@ -1,3 +1,4 @@
+import datetime
 import subprocess
 import os
 import json
@@ -10,6 +11,7 @@ load_dotenv(dotenv_path=dotenv_path)
 
 def AddingToEnviroment(data):
     with open('.env', 'r') as input, open('.env.temp', 'w') as output:
+        data["datetime"] = datetime.datetime.now()
         for line in input.readlines():
             if not line.strip() or not re.compile('#').search(line) == None:
                 output.write(line)
