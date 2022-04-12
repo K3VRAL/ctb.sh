@@ -19,11 +19,11 @@ let osupy = (() => {
         }).catch(() => {
             new Promise((resolve) => {
                 let process = spawn('python', ['./src/server/data/scripts/osu.py', '-c']);
-                process.on("exit", resolve);
+                process.on("exit", resolve());
             }).then(() => {
                 new Promise((resolve) => {
                     let process = spawn('python', ['./src/server/data/scripts/osu.py', '-r']);
-                    process.on("exit", resolve);
+                    process.on("exit", resolve());
                 }).then(() => {
                     osupy();
                 });
@@ -37,7 +37,7 @@ let malodypy = (() => {
         clearInterval(i);
         new Promise((resolve) => {
             let process = spawn('python', ['./src/server/data/scripts/malody.py', '-r']);
-            process.on("exit", resolve);
+            process.on("exit", resolve());
         }).then(() => {
             malodypy();
         });
